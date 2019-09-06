@@ -11,6 +11,7 @@ class GetBoardMembers(private val request: Request) : BaseTrelloRequest<Array<Me
 
     override fun prepare() {
         call.request = "boards/${request.id}/members"
+        call.parameters["fields"] = "fullName,name,role,avatarUrl,url"
     }
 
     override suspend fun execute(): Array<Member> {

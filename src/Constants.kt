@@ -1,7 +1,6 @@
 package nl.teqplay
 
-class Constants {
-    companion object {
-        const val TRELLO_BASEURL = "https://api.trello.com/1/"
-    }
+object Constants {
+    const val TRELLO_BASEURL = "https://api.trello.com/1/"
+    const val DATABASE_NAME = "test"
 }

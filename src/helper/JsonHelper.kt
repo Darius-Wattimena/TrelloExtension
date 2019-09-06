@@ -8,7 +8,8 @@ import io.ktor.client.features.json.JsonFeature
 class JsonHelper {
     companion object {
         suspend fun <T> fromJson(gson: Gson, call: TrelloCall, client: HttpClient, clazz: Class<T>): T {
-            return gson.fromJson(call.execute(client), clazz)
+            val result = call.execute(client)
+            return gson.fromJson(result, clazz)
         }
 
         fun client(): HttpClient = HttpClient {

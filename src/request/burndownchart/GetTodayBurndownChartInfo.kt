@@ -15,7 +15,7 @@ class GetTodayBurndownChartInfo(
 ) : BaseTrelloRequest<BurndownChartItem>() {
     private val boardCall = TrelloCall(request.GetKey(), request.GetToken())
     private var bcDetails = BurndownChartDetails()
-    private val driver = DatabaseDriver()
+    private val driver = DatabaseDriver.instance
 
     override fun prepare() {
         boardCall.request = "/board/${request.id}/lists"
@@ -30,7 +30,7 @@ class GetTodayBurndownChartInfo(
         val processor = DayProcessor(request, doneListId)
         bcDetails = processor.process(request, gson, boardCall, client)
         val todayItem = processor.convertToBurndownChartItem(bcDetails, todayDate)
-        driver.saveBurndownChartItem(todayItem)
+        driver.save(todayItem, BurndownChartItem::class.java)
         return todayItem
     }
 }

@@ -1,6 +1,8 @@
 package nl.teqplay.trello.model
 
+import nl.teqplay.mongodb.Identifiable
+
 data class DoneList(
-    val boardId: String,
+    override var _id: String,
     val listId: String
-)
+) : Identifiable
