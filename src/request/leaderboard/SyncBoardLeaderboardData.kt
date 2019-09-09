@@ -20,6 +20,7 @@ class SyncBoardLeaderboardData(
     private val doneListId: String,
     private val doingListId: String,
     private val testingListId: String,
+    private val reviewingListId: String,
     private val startDate: String,
     private val endDate: String
 ) : BaseTrelloRequest<String>() {
@@ -70,6 +71,7 @@ class SyncBoardLeaderboardData(
                         0,
                         0,
                         0,
+                        0,
                         0L,
                         0L)
                 }
@@ -93,6 +95,7 @@ class SyncBoardLeaderboardData(
                             doneListId -> leaderBoardItem.doneTasks++
                             doingListId -> leaderBoardItem.doingTasks++
                             testingListId -> leaderBoardItem.testingTasks++
+                            reviewingListId -> leaderBoardItem.reviewingTasks++
                         }
                         leaderBoardItem.assignedTasks++
                     }

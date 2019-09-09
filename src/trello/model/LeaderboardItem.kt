@@ -12,6 +12,7 @@ data class LeaderboardItem(
     var doingTasks: Int,
     var doneTasks: Int,
     var testingTasks: Int,
+    var reviewingTasks: Int,
     var startDate: Long,
     var endDate: Long
 ) : Identifiable

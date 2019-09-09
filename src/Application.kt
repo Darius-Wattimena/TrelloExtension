@@ -138,6 +138,7 @@ fun Application.module(testing: Boolean = false) {
                         val doneListId = call.request.headers["doneListId"]
                         val doingListId = call.request.headers["doingListId"]
                         val testingListId = call.request.headers["testingListId"]
+                        val reviewingListId = call.request.headers["reviewingListId"]
                         val startDate = call.request.headers["startDate"]
                         val endDate = call.request.headers["endDate"]
                         call.respondText(
@@ -146,6 +147,7 @@ fun Application.module(testing: Boolean = false) {
                                 doneListId.toString(),
                                 doingListId.toString(),
                                 testingListId.toString(),
+                                reviewingListId.toString(),
                                 startDate.toString(),
                                 endDate.toString()
                             )),
