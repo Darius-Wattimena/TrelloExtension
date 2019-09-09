@@ -1,6 +1,6 @@
 package nl.teqplay.trelloextension.request.burndownchart
 
-import nl.teqplay.trelloextension.helper.Request
+import nl.teqplay.trelloextension.helper.RequestInfo
 import nl.teqplay.trelloextension.helper.TrelloCall
 import nl.teqplay.trelloextension.mongodb.Database
 import nl.teqplay.trelloextension.request.BaseTrelloRequest
@@ -11,19 +11,19 @@ import java.sql.Date
 import java.time.LocalDate
 
 class GetBurndownChartInfo(
-    val request: Request,
+    val requestInfo: RequestInfo,
     private val doneListId: String,
     private val startDate: String,
     private val endDate: String,
     private val today: String
 ) : BaseTrelloRequest<BurndownChart>() {
 
-    private val boardCall = TrelloCall(request.GetKey(), request.GetToken())
+    private val boardCall = TrelloCall(requestInfo.GetKey(), requestInfo.GetToken())
     private var bcDetails = BurndownChartDetails()
     private val db = Database.instance
 
     override fun prepare() {
-        boardCall.request = "/board/${request.id}/lists"
+        boardCall.request = "/board/${requestInfo.id}/lists"
         boardCall.parameters["cards"] = "none"
         boardCall.parameters["fields"] = "none"
     }
@@ -41,8 +41,8 @@ class GetBurndownChartInfo(
             val today = LocalDate.parse(today)
             val todayDate = Date.valueOf(today).time
             databaseDays = (today.dayOfYear - startOfSprint.dayOfYear) + 1
-            val processor = DayProcessor(request, doneListId)
-            bcDetails = processor.process(request, gson, boardCall, client)
+            val processor = DayProcessor(requestInfo, doneListId)
+            bcDetails = processor.process(requestInfo, gson, boardCall, client)
             val item = processor.convertToBurndownChartItem(bcDetails, todayDate)
             burndownChart.items[todayDate] = item
             db.saveWhen(item, BurndownChartItem::class.java, BurndownChartItem::date eq todayDate)

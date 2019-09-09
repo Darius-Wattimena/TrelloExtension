@@ -1,16 +1,16 @@
 package nl.teqplay.trelloextension.request.list
 
 import nl.teqplay.trelloextension.helper.JsonHelper
-import nl.teqplay.trelloextension.helper.Request
+import nl.teqplay.trelloextension.helper.RequestInfo
 import nl.teqplay.trelloextension.helper.TrelloCall
 import nl.teqplay.trelloextension.request.BaseTrelloRequest
 import nl.teqplay.trelloextension.trello.model.List
 
-class GetList(private val request: Request) : BaseTrelloRequest<List>() {
-    private val call = TrelloCall(request.GetKey(), request.GetToken())
+class GetList(private val requestInfo: RequestInfo) : BaseTrelloRequest<List>() {
+    private val call = TrelloCall(requestInfo.GetKey(), requestInfo.GetToken())
 
     override fun prepare() {
-        call.request = "lists/${request.id}"
+        call.request = "lists/${requestInfo.id}"
     }
 
     override suspend fun execute(): List {

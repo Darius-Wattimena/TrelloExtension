@@ -2,7 +2,7 @@ package nl.teqplay.trelloextension.helper
 
 import io.ktor.http.Headers
 
-data class Request(
+data class RequestInfo(
     val headers: Headers,
     var id: String = "",
     private var key: String = "",

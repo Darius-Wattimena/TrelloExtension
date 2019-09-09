@@ -1,22 +1,22 @@
 package nl.teqplay.trelloextension.request.board
 
 import nl.teqplay.trelloextension.helper.JsonHelper
-import nl.teqplay.trelloextension.helper.Request
+import nl.teqplay.trelloextension.helper.RequestInfo
 import nl.teqplay.trelloextension.helper.TrelloCall
 import nl.teqplay.trelloextension.request.BaseTrelloRequest
 import nl.teqplay.trelloextension.trello.model.Board
 import nl.teqplay.trelloextension.trello.model.ListStatistics
 import nl.teqplay.trelloextension.trello.model.Statistics
 
-class GetBoardStatistics(private val request: Request) : BaseTrelloRequest<Statistics>() {
-    private val boardCall = TrelloCall(request.GetKey(), request.GetToken())
-    private val listsCall = TrelloCall(request.GetKey(), request.GetToken())
+class GetBoardStatistics(private val requestInfo: RequestInfo) : BaseTrelloRequest<Statistics>() {
+    private val boardCall = TrelloCall(requestInfo.GetKey(), requestInfo.GetToken())
+    private val listsCall = TrelloCall(requestInfo.GetKey(), requestInfo.GetToken())
 
     override fun prepare() {
-        boardCall.request = "board/${request.id}"
+        boardCall.request = "board/${requestInfo.id}"
         boardCall.parameters["fields"] = "name"
 
-        listsCall.request = "board/${request.id}/lists"
+        listsCall.request = "board/${requestInfo.id}/lists"
         listsCall.parameters["fields"] = "name"
         listsCall.parameters["cards"] = "all"
         listsCall.parameters["card_fields"] = "labels, name"

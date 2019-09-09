@@ -5,7 +5,7 @@ import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import org.slf4j.LoggerFactory
 
-class TrelloCall(val apiKey: String, val oauthToken: String) {
+class TrelloCall(private val apiKey: String, private val oauthToken: String) {
     val logger = LoggerFactory.getLogger(this::class.java)
     val parameters = mutableMapOf<String, String>()
     var request = ""

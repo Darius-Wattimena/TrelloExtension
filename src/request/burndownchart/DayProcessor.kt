@@ -1,7 +1,7 @@
 package nl.teqplay.trelloextension.request.burndownchart
 
 import nl.teqplay.trelloextension.helper.JsonHelper
-import nl.teqplay.trelloextension.helper.Request
+import nl.teqplay.trelloextension.helper.RequestInfo
 import nl.teqplay.trelloextension.helper.TrelloCall
 import nl.teqplay.trelloextension.trello.model.Card
 import nl.teqplay.trelloextension.trello.model.List
@@ -10,16 +10,16 @@ import io.ktor.client.HttpClient
 import trello.model.BurndownChartItem
 
 class DayProcessor(
-    val request: Request,
+    val requestInfo: RequestInfo,
     private val doneListId: String) {
 
     private val bcDetails = BurndownChartDetails()
 
-    suspend fun process(request: Request, gson: Gson, boardCall: TrelloCall, client: HttpClient) : BurndownChartDetails {
+    suspend fun process(requestInfo: RequestInfo, gson: Gson, boardCall: TrelloCall, client: HttpClient) : BurndownChartDetails {
         val lists = JsonHelper.fromJson(gson, boardCall, client, Array<List>::class.java)
 
         for (list in lists) {
-            val listCall = TrelloCall(request.GetKey(), request.GetToken())
+            val listCall = TrelloCall(requestInfo.GetKey(), requestInfo.GetToken())
             listCall.request = "/lists/${list.id}/cards"
             listCall.parameters["fields"] = "id,name"
 

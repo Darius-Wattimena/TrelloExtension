@@ -1,6 +1,6 @@
 package nl.teqplay.trelloextension
 
-import nl.teqplay.trelloextension.helper.Request
+import nl.teqplay.trelloextension.helper.RequestInfo
 import nl.teqplay.trelloextension.request.GetCardActions
 import nl.teqplay.trelloextension.request.burndownchart.GetBurndownChartInfo
 import nl.teqplay.trelloextension.request.action.GetAction
@@ -27,6 +27,9 @@ import io.ktor.routing.get
 import io.ktor.routing.method
 import io.ktor.routing.route
 import io.ktor.routing.routing
+import nl.teqplay.trelloextension.request.leaderboard.GetLeaderboardData
+import nl.teqplay.trelloextension.request.leaderboard.SyncBoardLeaderboardData
+import nl.teqplay.trelloextension.request.member.SyncMembers
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
@@ -47,7 +50,7 @@ fun Application.module(testing: Boolean = false) {
                      */
 
                     get("/board/{id}") {
-                        val request = Request(call.request.headers, call.parameters["id"]!!)
+                        val request = RequestInfo(call.request.headers, call.parameters["id"]!!)
                         call.respondText(
                             RequestExecuter.execute(GetBoard(request)),
                             contentType = ContentType.Application.Json
@@ -55,7 +58,7 @@ fun Application.module(testing: Boolean = false) {
                     }
 
                     get("/board/{id}/detailed") {
-                        val request = Request(call.request.headers, call.parameters["id"]!!)
+                        val request = RequestInfo(call.request.headers, call.parameters["id"]!!)
                         call.respondText(
                             RequestExecuter.execute(GetDetailedBoard(request)),
                             contentType = ContentType.Application.Json
@@ -63,7 +66,7 @@ fun Application.module(testing: Boolean = false) {
                     }
 
                     get("/board/{id}/statistics") {
-                        val request = Request(call.request.headers, call.parameters["id"]!!)
+                        val request = RequestInfo(call.request.headers, call.parameters["id"]!!)
                         call.respondText(
                             RequestExecuter.execute(GetBoardStatistics(request)),
                             contentType = ContentType.Application.Json
@@ -71,7 +74,7 @@ fun Application.module(testing: Boolean = false) {
                     }
 
                     get("/board/{id}/getLastAction") {
-                        val request = Request(call.request.headers, call.parameters["id"]!!)
+                        val request = RequestInfo(call.request.headers, call.parameters["id"]!!)
                         call.respondText(
                             RequestExecuter.execute(GetLastBoardAction(request)),
                             contentType = ContentType.Application.Json
@@ -79,7 +82,7 @@ fun Application.module(testing: Boolean = false) {
                     }
 
                     get("/processedBoard/{id}") {
-                        val request = Request(call.request.headers, call.parameters["id"]!!)
+                        val request = RequestInfo(call.request.headers, call.parameters["id"]!!)
                         call.respondText(
                             getBoardsAndProcessActionsOfAllCards(request),
                             contentType = ContentType.Application.Json
@@ -88,7 +91,7 @@ fun Application.module(testing: Boolean = false) {
 
                     route("/testBoard") {
                         get {
-                            val request = Request(call.request.headers, "RsU5w4Bn")
+                            val request = RequestInfo(call.request.headers, "RsU5w4Bn")
                             call.respondText(
                                 getBoardsAndProcessActionsOfAllCards(request),
                                 contentType = ContentType.Application.Json
@@ -97,7 +100,7 @@ fun Application.module(testing: Boolean = false) {
                     }
 
                     get("/board/{id}/burndownchartinfo") {
-                        val request = Request(call.request.headers, call.parameters["id"]!!)
+                        val request = RequestInfo(call.request.headers, call.parameters["id"]!!)
                         val doneListId = call.request.headers["doneListId"]
                         val startDate = call.request.headers["startDate"]
                         val endDate = call.request.headers["endDate"]
@@ -116,7 +119,7 @@ fun Application.module(testing: Boolean = false) {
                     }
 
                     get("/board/{id}/todayburndownchartinfo") {
-                        val request = Request(call.request.headers, call.parameters["id"]!!)
+                        val request = RequestInfo(call.request.headers, call.parameters["id"]!!)
                         val doneListId = call.request.headers["doneListId"]
                         val today = call.request.headers["today"]
                         call.respondText(
@@ -130,12 +133,46 @@ fun Application.module(testing: Boolean = false) {
                         )
                     }
 
+                    get("/board/{id}/sync/leaderboard") {
+                        val request = RequestInfo(call.request.headers, call.parameters["id"]!!)
+                        val doneListId = call.request.headers["doneListId"]
+                        val doingListId = call.request.headers["doingListId"]
+                        val testingListId = call.request.headers["testingListId"]
+                        val startDate = call.request.headers["startDate"]
+                        val endDate = call.request.headers["endDate"]
+                        call.respondText(
+                            RequestExecuter.execute(SyncBoardLeaderboardData(
+                                request,
+                                doneListId.toString(),
+                                doingListId.toString(),
+                                testingListId.toString(),
+                                startDate.toString(),
+                                endDate.toString()
+                            )),
+                            contentType = ContentType.Application.Json
+                        )
+                    }
+
+                    get("/board/{id}/leaderboard") {
+                        val startDate = call.request.headers["startDate"]
+                        val endDate = call.request.headers["endDate"]
+                        call.respondText(
+                            RequestExecuter.execute(
+                                GetLeaderboardData(call.parameters["id"]!!,
+                                    startDate.toString(),
+                                    endDate.toString()
+                                )
+                            ),
+                            contentType = ContentType.Application.Json
+                        )
+                    }
+
                     /**
                      * List
                      */
 
                     get("/list/{id}") {
-                        val request = Request(call.request.headers, call.parameters["id"]!!)
+                        val request = RequestInfo(call.request.headers, call.parameters["id"]!!)
                         call.respondText(
                             RequestExecuter.execute(GetList(request)),
                             contentType = ContentType.Application.Json
@@ -143,7 +180,7 @@ fun Application.module(testing: Boolean = false) {
                     }
 
                     get("/list/{id}/detailed") {
-                        val request = Request(call.request.headers, call.parameters["id"]!!)
+                        val request = RequestInfo(call.request.headers, call.parameters["id"]!!)
                         call.respondText(
                             RequestExecuter.execute(GetDetailedList(request)),
                             contentType = ContentType.Application.Json
@@ -155,7 +192,7 @@ fun Application.module(testing: Boolean = false) {
                      */
 
                     get("/card/{id}") {
-                        val request = Request(call.request.headers, call.parameters["id"]!!)
+                        val request = RequestInfo(call.request.headers, call.parameters["id"]!!)
                         call.respondText(
                             RequestExecuter.execute(GetCard(request)),
                             contentType = ContentType.Application.Json
@@ -163,7 +200,7 @@ fun Application.module(testing: Boolean = false) {
                     }
 
                     get("/card/{id}/actions") {
-                        val request = Request(call.request.headers, call.parameters["id"]!!)
+                        val request = RequestInfo(call.request.headers, call.parameters["id"]!!)
                         call.respondText(
                             RequestExecuter.execute(GetCardActions(request)),
                             contentType = ContentType.Application.Json
@@ -175,7 +212,7 @@ fun Application.module(testing: Boolean = false) {
                      */
 
                     get("/action/{id}") {
-                        val request = Request(call.request.headers, call.parameters["id"]!!)
+                        val request = RequestInfo(call.request.headers, call.parameters["id"]!!)
                         call.respondText(
                             RequestExecuter.execute(GetAction(request)),
                             contentType = ContentType.Application.Json
@@ -187,7 +224,7 @@ fun Application.module(testing: Boolean = false) {
                      */
 
                     get("member/{id}") {
-                        val request = Request(call.request.headers, call.parameters["id"]!!)
+                        val request = RequestInfo(call.request.headers, call.parameters["id"]!!)
                         call.respondText(
                             RequestExecuter.execute(GetMember(request)),
                             contentType = ContentType.Application.Json
@@ -195,29 +232,36 @@ fun Application.module(testing: Boolean = false) {
                     }
 
                     get("board/{id}/members") {
-                        val request = Request(call.request.headers, call.parameters["id"]!!)
+                        val request = RequestInfo(call.request.headers, call.parameters["id"]!!)
                         call.respondText(
                             RequestExecuter.execute(GetBoardMembers(request)),
                             contentType = ContentType.Application.Json
                         )
                     }
 
+                    get("board/{id}/sync/members") {
+                        val request = RequestInfo(call.request.headers, call.parameters["id"]!!)
+                        call.respondText(
+                            RequestExecuter.execute(SyncMembers(request)),
+                            contentType = ContentType.Application.Json
+                        )
+                    }
                 }
             }
         }
     }
 }
 
-suspend fun getBoardsAndProcessActionsOfAllCards(request: Request): String {
+suspend fun getBoardsAndProcessActionsOfAllCards(requestInfo: RequestInfo): String {
     val gson = Gson()
     return try {
-        val trelloRequest = GetDetailedBoard(request)
+        val trelloRequest = GetDetailedBoard(requestInfo)
         trelloRequest.prepare()
         val board = trelloRequest.execute()
 
         for (list in board.lists)
             for (card in list.cards) {
-                val newRequest = request.copy(headers = request.headers, id = card.id)
+                val newRequest = requestInfo.copy(headers = requestInfo.headers, id = card.id)
                 val actionRequest = GetCardActions(newRequest)
                 actionRequest.prepare()
                 card.actions = actionRequest.execute()

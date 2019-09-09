@@ -6,7 +6,7 @@ data class Member(
     override var _id: String?,
     val id: String,
     var fullName: String,
-    val role: String,
-    val avatarUrl: String,
-    val url: String
+    var role: String?,
+    var avatarUrl: String?,
+    var url: String?
 ) : Identifiable

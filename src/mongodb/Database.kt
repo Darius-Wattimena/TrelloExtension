@@ -3,6 +3,7 @@ package nl.teqplay.trelloextension.mongodb
 import com.mongodb.client.MongoCollection
 import nl.teqplay.trelloextension.Constants
 import nl.teqplay.trelloextension.trello.model.DoneList
+import nl.teqplay.trelloextension.trello.model.LeaderboardItem
 import nl.teqplay.trelloextension.trello.model.Member
 import org.bson.conversions.Bson
 import org.litote.kmongo.*
@@ -22,6 +23,8 @@ class Database {
                 registerCollection(database.getCollection(), BurndownChartItem::class.java)
                 registerCollection(database.getCollection(), DoneList::class.java)
                 registerCollection(database.getCollection(), Member::class.java)
+                registerCollection(database.getCollection(), LeaderboardItem::class.java)
+                registerCollection(database.getCollection(), LeaderboardItem::class.java)
             }
 
 
@@ -41,12 +44,16 @@ class Database {
                 return DatabaseHelper.find(parameters, clazz, collections)
             }
 
+            fun <T : Identifiable> findAll(clazz: Class<T>) : List<T>? {
+                return DatabaseHelper.findAll(clazz, collections)
+            }
+
             fun <T : Identifiable> findAll(id: String, clazz: Class<T>) : List<T>? {
                 return DatabaseHelper.findAll(id, clazz, collections)
             }
 
-            fun <T : Identifiable> findAll(field: String, value: String, clazz:Class<T>) : List<T>? {
-                return DatabaseHelper.findAll(field, value, clazz, collections)
+            fun <T : Identifiable> findAll(bson: Bson, clazz:Class<T>) : List<T>? {
+                return DatabaseHelper.findAll(bson, clazz, collections)
             }
 
             fun <T : Identifiable> findAll(parameters: Map<String, String>, clazz: Class<T>) : List<T>? {
@@ -58,7 +65,11 @@ class Database {
             }
 
             fun <T : Identifiable> saveWhen(item: T, clazz: Class<T>, filter: Bson) {
-                DatabaseHelper.save(item, clazz, collections, filter)
+                DatabaseHelper.saveWhen(item, clazz, collections, filter)
+            }
+
+            fun <T : Identifiable> saveOnly(item: T, clazz: Class<T>, filter: Bson) {
+                DatabaseHelper.saveOnly(item, clazz, collections, filter)
             }
 
             fun <T : Identifiable> delete(item: T, clazz: Class<T>) {
