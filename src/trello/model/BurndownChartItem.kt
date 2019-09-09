@@ -1,6 +1,6 @@
 package trello.model
 
-import nl.teqplay.mongodb.Identifiable
+import nl.teqplay.trelloextension.mongodb.Identifiable
 
 data class BurndownChartItem(
     override var _id: String?,

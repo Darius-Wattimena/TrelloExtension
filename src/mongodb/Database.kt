@@ -1,9 +1,9 @@
-package nl.teqplay.mongodb
+package nl.teqplay.trelloextension.mongodb
 
 import com.mongodb.client.MongoCollection
-import nl.teqplay.Constants
-import nl.teqplay.trello.model.DoneList
-import nl.teqplay.trello.model.Member
+import nl.teqplay.trelloextension.Constants
+import nl.teqplay.trelloextension.trello.model.DoneList
+import nl.teqplay.trelloextension.trello.model.Member
 import org.bson.conversions.Bson
 import org.litote.kmongo.*
 import trello.model.BurndownChartItem

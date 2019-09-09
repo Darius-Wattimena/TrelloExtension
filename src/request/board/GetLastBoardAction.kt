@@ -1,10 +1,10 @@
-package nl.teqplay.request.board
+package nl.teqplay.trelloextension.request.board
 
-import nl.teqplay.helper.JsonHelper
-import nl.teqplay.helper.Request
-import nl.teqplay.helper.TrelloCall
-import nl.teqplay.request.BaseTrelloRequest
-import nl.teqplay.trello.model.Action
+import nl.teqplay.trelloextension.helper.JsonHelper
+import nl.teqplay.trelloextension.helper.Request
+import nl.teqplay.trelloextension.helper.TrelloCall
+import nl.teqplay.trelloextension.request.BaseTrelloRequest
+import nl.teqplay.trelloextension.trello.model.Action
 
 class GetLastBoardAction(val request: Request) : BaseTrelloRequest<Action>() {
     private val call = TrelloCall(request.GetKey(), request.GetToken())

@@ -1,10 +1,10 @@
-package nl.teqplay.request.burndownchart
+package nl.teqplay.trelloextension.request.burndownchart
 
-import nl.teqplay.helper.JsonHelper
-import nl.teqplay.helper.Request
-import nl.teqplay.helper.TrelloCall
-import nl.teqplay.trello.model.Card
-import nl.teqplay.trello.model.List
+import nl.teqplay.trelloextension.helper.JsonHelper
+import nl.teqplay.trelloextension.helper.Request
+import nl.teqplay.trelloextension.helper.TrelloCall
+import nl.teqplay.trelloextension.trello.model.Card
+import nl.teqplay.trelloextension.trello.model.List
 import com.google.gson.Gson
 import io.ktor.client.HttpClient
 import trello.model.BurndownChartItem

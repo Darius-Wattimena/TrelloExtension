@@ -1,11 +1,11 @@
-package nl.teqplay.request.member
+package nl.teqplay.trelloextension.request.member
 
-import nl.teqplay.helper.JsonHelper
-import nl.teqplay.helper.Request
-import nl.teqplay.helper.TrelloCall
-import nl.teqplay.mongodb.Database
-import nl.teqplay.request.BaseTrelloRequest
-import nl.teqplay.trello.model.Member
+import nl.teqplay.trelloextension.helper.JsonHelper
+import nl.teqplay.trelloextension.helper.Request
+import nl.teqplay.trelloextension.helper.TrelloCall
+import nl.teqplay.trelloextension.mongodb.Database
+import nl.teqplay.trelloextension.request.BaseTrelloRequest
+import nl.teqplay.trelloextension.trello.model.Member
 
 class SyncMembers(private val request: Request) : BaseTrelloRequest<String>() {
     private val call = TrelloCall(request.GetKey(), request.GetToken())

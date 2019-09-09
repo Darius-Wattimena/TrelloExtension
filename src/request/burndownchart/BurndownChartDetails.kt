@@ -1,4 +1,4 @@
-package nl.teqplay.request.burndownchart
+package nl.teqplay.trelloextension.request.burndownchart
 
 class BurndownChartDetails {
     var donePoint = 0

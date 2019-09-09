@@ -1,4 +1,4 @@
-package nl.teqplay.mongodb
+package nl.teqplay.trelloextension.mongodb
 
 interface Identifiable {
     var _id: String?

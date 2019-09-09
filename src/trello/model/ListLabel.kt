@@ -1,4 +1,4 @@
-package nl.teqplay.trello.model
+package nl.teqplay.trelloextension.trello.model
 
 data class ListLabel(
     val name: String,

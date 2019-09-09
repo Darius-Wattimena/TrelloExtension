@@ -1,9 +1,9 @@
-package nl.teqplay.request.burndownchart
+package nl.teqplay.trelloextension.request.burndownchart
 
-import nl.teqplay.helper.Request
-import nl.teqplay.helper.TrelloCall
-import nl.teqplay.mongodb.Database
-import nl.teqplay.request.BaseTrelloRequest
+import nl.teqplay.trelloextension.helper.Request
+import nl.teqplay.trelloextension.helper.TrelloCall
+import nl.teqplay.trelloextension.mongodb.Database
+import nl.teqplay.trelloextension.request.BaseTrelloRequest
 import org.litote.kmongo.eq
 import trello.model.BurndownChartItem
 import java.sql.Date

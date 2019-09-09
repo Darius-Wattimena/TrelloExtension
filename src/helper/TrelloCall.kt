@@ -1,6 +1,6 @@
-package nl.teqplay.helper
+package nl.teqplay.trelloextension.helper
 
-import nl.teqplay.Constants
+import nl.teqplay.trelloextension.Constants
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import org.slf4j.LoggerFactory

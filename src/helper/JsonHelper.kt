@@ -1,4 +1,4 @@
-package nl.teqplay.helper
+package nl.teqplay.trelloextension.helper
 
 import com.google.gson.Gson
 import io.ktor.client.HttpClient

@@ -1,6 +1,6 @@
-package nl.teqplay.request
+package nl.teqplay.trelloextension.request
 
-import nl.teqplay.helper.JsonHelper
+import nl.teqplay.trelloextension.helper.JsonHelper
 import com.google.gson.Gson
 
 abstract class BaseTrelloRequest<T> : TrelloRequest<T> {

@@ -1,4 +1,4 @@
-package nl.teqplay
+package nl.teqplay.trelloextension
 
 import io.ktor.application.*
 import io.ktor.response.*

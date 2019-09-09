@@ -1,4 +1,4 @@
-package nl.teqplay.helper
+package nl.teqplay.trelloextension.helper
 
 import io.ktor.http.Headers
 

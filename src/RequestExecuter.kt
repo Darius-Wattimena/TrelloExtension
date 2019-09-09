@@ -1,7 +1,7 @@
-package nl.teqplay
+package nl.teqplay.trelloextension
 
-import nl.teqplay.request.BaseTrelloRequest
-import nl.teqplay.trello.Response
+import nl.teqplay.trelloextension.request.BaseTrelloRequest
+import nl.teqplay.trelloextension.trello.Response
 import com.google.gson.Gson
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory

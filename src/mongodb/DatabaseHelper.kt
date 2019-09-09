@@ -1,4 +1,4 @@
-package nl.teqplay.mongodb
+package nl.teqplay.trelloextension.mongodb
 
 import com.mongodb.client.MongoCollection
 import org.bson.conversions.Bson
