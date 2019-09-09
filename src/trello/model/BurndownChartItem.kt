@@ -3,7 +3,7 @@ package trello.model
 import nl.teqplay.mongodb.Identifiable
 
 data class BurndownChartItem(
-    override var _id: String,
+    override var _id: String?,
     val date: Long,
     val totalDonePoint: Int,
     val totalDoneItems: Int,

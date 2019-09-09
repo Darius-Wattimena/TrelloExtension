@@ -2,9 +2,10 @@ package nl.teqplay.request.burndownchart
 
 import nl.teqplay.helper.Request
 import nl.teqplay.helper.TrelloCall
-import nl.teqplay.mongodb.DatabaseDriver
+import nl.teqplay.mongodb.Database
 import nl.teqplay.request.BaseTrelloRequest
 import nl.teqplay.trello.model.BurndownChart
+import org.litote.kmongo.eq
 import trello.model.BurndownChartItem
 import java.sql.Date
 import java.time.LocalDate
@@ -19,7 +20,7 @@ class GetBurndownChartInfo(
 
     private val boardCall = TrelloCall(request.GetKey(), request.GetToken())
     private var bcDetails = BurndownChartDetails()
-    private val driver = DatabaseDriver.instance
+    private val db = Database.instance
 
     override fun prepare() {
         boardCall.request = "/board/${request.id}/lists"
@@ -44,14 +45,14 @@ class GetBurndownChartInfo(
             bcDetails = processor.process(request, gson, boardCall, client)
             val item = processor.convertToBurndownChartItem(bcDetails, todayDate)
             burndownChart.items[todayDate] = item
-            driver.save(item, BurndownChartItem::class.java)
+            db.saveWhen(item, BurndownChartItem::class.java, BurndownChartItem::date eq todayDate)
         }
 
         var checkingDatabaseDay = startOfSprint.plusDays((databaseDays - 1).toLong())
 
         while (databaseDays > 0) {
             val databaseDayEpoch = Date.valueOf(checkingDatabaseDay).time
-            val bcDatabaseItem = driver.find("date", databaseDayEpoch.toString(), BurndownChartItem::class.java)
+            val bcDatabaseItem = db.find("date", databaseDayEpoch.toString(), BurndownChartItem::class.java)
             if (bcDatabaseItem != null) {
                 burndownChart.items[databaseDayEpoch] = bcDatabaseItem
             }

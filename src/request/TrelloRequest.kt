@@ -1,4 +1,4 @@
-package nl.teqplay
+package nl.teqplay.request
 
 interface TrelloRequest<T> {
     fun prepare()

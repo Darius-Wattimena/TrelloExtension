@@ -2,8 +2,9 @@ package nl.teqplay.request.burndownchart
 
 import nl.teqplay.helper.Request
 import nl.teqplay.helper.TrelloCall
-import nl.teqplay.mongodb.DatabaseDriver
+import nl.teqplay.mongodb.Database
 import nl.teqplay.request.BaseTrelloRequest
+import org.litote.kmongo.eq
 import trello.model.BurndownChartItem
 import java.sql.Date
 import java.time.LocalDate
@@ -15,7 +16,7 @@ class GetTodayBurndownChartInfo(
 ) : BaseTrelloRequest<BurndownChartItem>() {
     private val boardCall = TrelloCall(request.GetKey(), request.GetToken())
     private var bcDetails = BurndownChartDetails()
-    private val driver = DatabaseDriver.instance
+    private val db = Database.instance
 
     override fun prepare() {
         boardCall.request = "/board/${request.id}/lists"
@@ -30,7 +31,7 @@ class GetTodayBurndownChartInfo(
         val processor = DayProcessor(request, doneListId)
         bcDetails = processor.process(request, gson, boardCall, client)
         val todayItem = processor.convertToBurndownChartItem(bcDetails, todayDate)
-        driver.save(todayItem, BurndownChartItem::class.java)
+        db.saveWhen(todayItem, BurndownChartItem::class.java, BurndownChartItem::date eq todayDate)
         return todayItem
     }
 }

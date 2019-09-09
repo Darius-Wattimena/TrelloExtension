@@ -1,6 +1,5 @@
 package nl.teqplay.request
 
-import nl.teqplay.TrelloRequest
 import nl.teqplay.helper.JsonHelper
 import com.google.gson.Gson
 

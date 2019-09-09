@@ -1,5 +1,5 @@
 package nl.teqplay.mongodb
 
 interface Identifiable {
-    var _id: String
+    var _id: String?
 }
