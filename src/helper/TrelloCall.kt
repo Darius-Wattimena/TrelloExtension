@@ -1,8 +1,8 @@
 package nl.teqplay.trelloextension.helper
 
-import nl.teqplay.trelloextension.Constants
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
+import nl.teqplay.trelloextension.Constants
 import org.slf4j.LoggerFactory
 
 class TrelloCall(private val apiKey: String, private val oauthToken: String) {
@@ -24,7 +24,7 @@ class TrelloCall(private val apiKey: String, private val oauthToken: String) {
     /**
      * Build the URL we need to execute the HTTP request
      *
-     * This URL contains all the [parameters], the [request] and some default values like the BaseURL, APIKey and OAuthToken
+     * This URL contains all the [parameters], the [service] and some default values like the BaseURL, APIKey and OAuthToken
      */
     private fun build() {
         logger.debug("Building Trello HTTP request")

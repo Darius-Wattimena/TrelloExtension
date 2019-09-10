@@ -1,0 +1,38 @@
+package nl.teqplay.trelloextension.service.burndownchart
+
+import nl.teqplay.trelloextension.datasource.BurndownChartDataSource
+import nl.teqplay.trelloextension.helper.RequestInfo
+import nl.teqplay.trelloextension.helper.TrelloCall
+import nl.teqplay.trelloextension.model.BurndownChartDetails
+import nl.teqplay.trelloextension.model.BurndownChartItem
+import nl.teqplay.trelloextension.datasource.Database
+import nl.teqplay.trelloextension.service.BaseTrelloRequest
+import java.sql.Date
+import java.time.LocalDate
+
+class GetTodayBurndownChartInfo(
+    val requestInfo: RequestInfo,
+    private val doneListId: String,
+    private val today: String
+) : BaseTrelloRequest<BurndownChartItem>() {
+    private val boardCall = TrelloCall(requestInfo.GetKey(), requestInfo.GetToken())
+    private val db = Database.instance
+
+    override fun prepare() {
+        boardCall.request = "/board/${requestInfo.id}/lists"
+        boardCall.parameters["cards"] = "none"
+        boardCall.parameters["fields"] = "none"
+    }
+
+    override suspend fun execute(): BurndownChartItem {
+        val today = LocalDate.parse(today)
+        val todayDate = Date.valueOf(today).time
+
+        return DayProcessor().run {
+            val details = process(requestInfo, gson, boardCall, client, doneListId)
+            convertToBurndownChartItem(details, todayDate)
+        }.also {
+            BurndownChartDataSource.updateWhenBurndownChartItemDateIsFoundOtherwiseInsert(it, db)
+        }
+    }
+}

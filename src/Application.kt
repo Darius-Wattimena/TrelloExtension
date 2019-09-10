@@ -5,7 +5,11 @@ import io.ktor.client.HttpClient
 import io.ktor.client.engine.apache.Apache
 import io.ktor.routing.route
 import io.ktor.routing.routing
-import nl.teqplay.trelloextension.route.*
+import nl.teqplay.trelloextension.controller.actionRouting
+import nl.teqplay.trelloextension.controller.boardRouting
+import nl.teqplay.trelloextension.controller.listRouting
+import nl.teqplay.trelloextension.controller.memberRouting
+import nl.teqplay.trelloextension.controller.cardRouting
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
