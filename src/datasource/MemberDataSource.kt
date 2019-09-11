@@ -1,6 +1,6 @@
 package nl.teqplay.trelloextension.datasource
 
-import com.mongodb.client.MongoCollection
+import com.mongodb.client.FindIterable
 import nl.teqplay.trelloextension.model.Member
 import org.litote.kmongo.eq
 import org.litote.kmongo.updateOne
@@ -14,4 +14,8 @@ object MemberDataSource {
         }
     }
 
+    fun findAll(database: Database.Companion.DatabaseImpl): List<Member> {
+        val collection = database.memberCollection
+        return collection.find().toList()
+    }
 }

@@ -1,5 +1,6 @@
 package nl.teqplay.trelloextension.service.burndownchart
 
+import nl.teqplay.trelloextension.Constants
 import nl.teqplay.trelloextension.datasource.BurndownChartDataSource
 import nl.teqplay.trelloextension.helper.RequestInfo
 import nl.teqplay.trelloextension.helper.TrelloCall
@@ -10,11 +11,11 @@ import nl.teqplay.trelloextension.service.BaseTrelloRequest
 import java.sql.Date
 import java.time.LocalDate
 
-class GetTodayBurndownChartInfo(
+class SyncBurndownChartInfo(
     val requestInfo: RequestInfo,
     private val doneListId: String,
     private val today: String
-) : BaseTrelloRequest<BurndownChartItem>() {
+) : BaseTrelloRequest<String>() {
     private val boardCall = TrelloCall(requestInfo.GetKey(), requestInfo.GetToken())
     private val db = Database.instance
 
@@ -24,15 +25,17 @@ class GetTodayBurndownChartInfo(
         boardCall.parameters["fields"] = "none"
     }
 
-    override suspend fun execute(): BurndownChartItem {
+    override suspend fun execute(): String {
         val today = LocalDate.parse(today)
         val todayDate = Date.valueOf(today).time
 
-        return DayProcessor().run {
+        DayProcessor().run {
             val details = process(requestInfo, gson, boardCall, client, doneListId)
             convertToBurndownChartItem(details, todayDate)
         }.also {
             BurndownChartDataSource.updateWhenBurndownChartItemDateIsFoundOtherwiseInsert(it, db)
         }
+
+        return Constants.SYNC_SUCCESS_RESPONSE
     }
 }

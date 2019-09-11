@@ -49,7 +49,6 @@ class DayProcessor() {
 
     fun convertToBurndownChartItem(bcDetails: BurndownChartDetails, epochDate: Long): BurndownChartItem {
         return BurndownChartItem(
-            "",
             epochDate,
             bcDetails.donePoint,
             bcDetails.doneItems,

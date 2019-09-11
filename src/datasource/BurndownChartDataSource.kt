@@ -1,12 +1,20 @@
 package nl.teqplay.trelloextension.datasource
 
-import com.mongodb.client.MongoCollection
 import nl.teqplay.trelloextension.model.BurndownChartItem
-import org.litote.kmongo.eq
-import org.litote.kmongo.findOne
-import org.litote.kmongo.updateOne
+import org.litote.kmongo.*
+import kotlin.collections.toList
 
 object BurndownChartDataSource {
+    fun findAllBetweenEpochDates(startDate: Long, endDate: Long, database: Database.Companion.DatabaseImpl): List<BurndownChartItem> {
+        val collection = database.burndownChartItemCollection
+        return collection.find(
+            and(
+                BurndownChartItem::date gte startDate,
+                BurndownChartItem::date lte endDate
+            )
+        ).toList()
+    }
+
     fun findWithEpochDate(date: Long, database: Database.Companion.DatabaseImpl) : BurndownChartItem? {
         val collection = database.burndownChartItemCollection
         return collection.findOne(BurndownChartItem::date eq date)

@@ -9,9 +9,12 @@ import nl.teqplay.trelloextension.model.LeaderboardItem
 import nl.teqplay.trelloextension.model.List
 import nl.teqplay.trelloextension.model.Member
 import nl.teqplay.trelloextension.datasource.Database
+import nl.teqplay.trelloextension.datasource.LeaderboardDataSource
+import nl.teqplay.trelloextension.datasource.MemberDataSource
 import nl.teqplay.trelloextension.service.BaseTrelloRequest
 import org.litote.kmongo.and
 import org.litote.kmongo.eq
+import org.litote.kmongo.util.idValue
 import java.sql.Date
 import java.time.LocalDate
 
@@ -40,48 +43,38 @@ class SyncBoardLeaderboardData(
         val endDate = Date.valueOf(endOfSprint).time
 
         val lists = JsonHelper.fromJson(gson, boardCall, client, Array<List>::class.java)
-        val databaseLeaderboardItems = db.findAll(
-            and(
-                LeaderboardItem::boardId eq requestInfo.id,
-                LeaderboardItem::startDate eq startDate,
-                LeaderboardItem::endDate eq endDate
-            ), LeaderboardItem::class.java
-        )
-        val databaseMembers = db.findAll(Member::class.java)
+        val databaseLeaderboardItems = LeaderboardDataSource.findAllBoardItems(requestInfo.id, startDate, endDate, db)
+
+        val databaseMembers = MemberDataSource.findAll(db)
         val resultItems = HashMap<String, LeaderboardItem>()
 
-        if (databaseLeaderboardItems != null) {
-            for (databaseLeaderboardItem in databaseLeaderboardItems) {
-                databaseLeaderboardItem.assignedTasks = 0
-                databaseLeaderboardItem.doingTasks = 0
-                databaseLeaderboardItem.doneTasks = 0
-                databaseLeaderboardItem.testingTasks = 0
-                resultItems[databaseLeaderboardItem.memberId] = databaseLeaderboardItem
+        databaseLeaderboardItems.map {
+            it.assignedTasks = 0
+            it.doingTasks = 0
+            it.doneTasks = 0
+            it.testingTasks = 0
+            it.reviewingTasks = 0
+        }.associateBy { LeaderboardItem::memberId to it }
+
+        databaseMembers.forEach {member ->
+            if (!resultItems.containsKey(member.id)) {
+                resultItems[member.id] = LeaderboardItem(
+                    requestInfo.id,
+                    member.id,
+                    member.fullName,
+                    member.avatarUrl,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0L,
+                    0L
+                )
             }
         }
 
-        if (databaseMembers != null) {
-            for (databaseMember in databaseMembers) {
-                if (!resultItems.containsKey(databaseMember.id)) {
-                    resultItems[databaseMember.id] = LeaderboardItem(
-                        null,
-                        requestInfo.id,
-                        databaseMember.id,
-                        databaseMember.fullName,
-                        databaseMember.avatarUrl,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0L,
-                        0L
-                    )
-                }
-            }
-        }
-
-        for (list in lists) {
+        lists.forEach { list ->
             val listCall = TrelloCall(requestInfo.GetKey(), requestInfo.GetToken())
             listCall.request = "/lists/${list.id}/cards"
             listCall.parameters["fields"] = "id,name"
@@ -110,12 +103,7 @@ class SyncBoardLeaderboardData(
             item.value.startDate = startDate
             item.value.endDate = endDate
 
-            db.saveWhen(
-                item.value, LeaderboardItem::class.java, and(
-                    LeaderboardItem::boardId eq requestInfo.id,
-                    LeaderboardItem::memberId eq item.key
-                )
-            )
+            LeaderboardDataSource.updateWhenBoardAndMemberIdIsFoundOtherwiseInsert(item.value, requestInfo.id, item.key, db)
         }
 
         return Constants.SYNC_SUCCESS_RESPONSE

@@ -14,7 +14,7 @@ import nl.teqplay.trelloextension.service.board.GetBoardStatistics
 import nl.teqplay.trelloextension.service.board.GetDetailedBoard
 import nl.teqplay.trelloextension.service.board.GetLastBoardAction
 import nl.teqplay.trelloextension.service.burndownchart.GetBurndownChartInfo
-import nl.teqplay.trelloextension.service.burndownchart.GetTodayBurndownChartInfo
+import nl.teqplay.trelloextension.service.burndownchart.SyncBurndownChartInfo
 import nl.teqplay.trelloextension.service.leaderboard.GetLeaderboardData
 import nl.teqplay.trelloextension.service.leaderboard.SyncBoardLeaderboardData
 import nl.teqplay.trelloextension.service.member.GetBoardMembers
@@ -56,32 +56,28 @@ fun Routing.boardRouting() {
 
         get("{id}/burndownchartinfo") {
             val request = RequestInfo(call.request.headers, call.parameters["id"]!!)
-            val doneListId = call.request.headers["doneListId"]
             val startDate = call.request.headers["startDate"]
             val endDate = call.request.headers["endDate"]
-            val today = call.request.headers["today"]
             val sprintDates = SprintDates(startDate, endDate)
 
             call.respondText(
                 RequestExecuter.execute(
                     GetBurndownChartInfo(
                         request,
-                        doneListId.toString(),
-                        sprintDates,
-                        today.toString()
+                        sprintDates
                     )
                 ),
                 contentType = ContentType.Application.Json
             )
         }
 
-        get("{id}/todayburndownchartinfo") {
+        get("{id}/sync/burndownchartinfo") {
             val request = RequestInfo(call.request.headers, call.parameters["id"]!!)
             val doneListId = call.request.headers["doneListId"]
             val today = call.request.headers["today"]
             call.respondText(
                 RequestExecuter.execute(
-                    GetTodayBurndownChartInfo(
+                    SyncBurndownChartInfo(
                         request,
                         doneListId.toString(),
                         today.toString()

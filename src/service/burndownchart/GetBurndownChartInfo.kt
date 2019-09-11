@@ -7,14 +7,10 @@ import nl.teqplay.trelloextension.helper.TrelloCall
 import nl.teqplay.trelloextension.model.BurndownChart
 import nl.teqplay.trelloextension.model.SprintDates
 import nl.teqplay.trelloextension.service.BaseTrelloRequest
-import java.sql.Date
-import java.time.LocalDate
 
 class GetBurndownChartInfo(
     val requestInfo: RequestInfo,
-    private val doneListId: String,
-    private val sprintDates: SprintDates,
-    private val today: String
+    private val sprintDates: SprintDates
 ) : BaseTrelloRequest<BurndownChart>() {
 
     private val boardCall = TrelloCall(requestInfo.GetKey(), requestInfo.GetToken())
@@ -28,37 +24,13 @@ class GetBurndownChartInfo(
 
     override suspend fun execute(): BurndownChart {
         val burndownChart = BurndownChart(HashMap(), sprintDates.epochStartDate, sprintDates.epochEndDate)
-        var databaseDays: Int
 
-        if (today != "null") {
-            val today = LocalDate.parse(today)
-            val todayDate = Date.valueOf(today).time
-            databaseDays = (today.dayOfYear - sprintDates.startLocalDate.dayOfYear) + 1
+        val databaseItems = BurndownChartDataSource.findAllBetweenEpochDates(sprintDates.epochStartDate, sprintDates.epochEndDate, db)
 
-            val item = DayProcessor().run {
-                val details = process(requestInfo, gson, boardCall, client, doneListId)
-                convertToBurndownChartItem(details, todayDate)
-            }
+        databaseItems.forEach {
+            burndownChart.items[it.date] = it
+        }.also { burndownChart.items.toSortedMap() }
 
-            burndownChart.items[todayDate] = item
-            BurndownChartDataSource.updateWhenBurndownChartItemDateIsFoundOtherwiseInsert(item, db)
-        } else {
-            databaseDays = (sprintDates.endLocalDate.dayOfYear - sprintDates.startLocalDate.dayOfYear) + 1
-        }
-
-        var checkingDatabaseDay = sprintDates.startLocalDate.plusDays((databaseDays - 1).toLong())
-
-        while (databaseDays > 0) {
-            val databaseDayEpoch = Date.valueOf(checkingDatabaseDay).time
-            val bcDatabaseItem = BurndownChartDataSource.findWithEpochDate(databaseDayEpoch, db)
-            if (bcDatabaseItem != null) {
-                burndownChart.items[databaseDayEpoch] = bcDatabaseItem
-            }
-            checkingDatabaseDay = checkingDatabaseDay.minusDays(1)
-            databaseDays--
-        }
-
-        burndownChart.items.toSortedMap()
         return burndownChart
     }
 }

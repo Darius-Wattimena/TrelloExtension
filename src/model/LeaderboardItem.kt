@@ -1,9 +1,6 @@
 package nl.teqplay.trelloextension.model
 
-import nl.teqplay.trelloextension.datasource.Identifiable
-
 data class LeaderboardItem(
-    override var _id: String?,
     val boardId: String,
     val memberId: String,
     val name: String,
@@ -15,4 +12,4 @@ data class LeaderboardItem(
     var reviewingTasks: Int,
     var startDate: Long,
     var endDate: Long
-) : Identifiable
+)
