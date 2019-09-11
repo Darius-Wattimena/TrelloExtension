@@ -35,7 +35,6 @@ class SyncBoardLeaderboardData(
         resetDatabaseLeaderboardItems(databaseLeaderboardItems)
         insertMissingMembersInResultMap(databaseMembers, requestInfo.id, resultItems)
 
-
         lists.forEach { list ->
             val cards = getAllCardsOfAList(list.id, requestInfo)
             processLeaderboardDataFromCards(cards, list.id, leaderboardLists, resultItems)

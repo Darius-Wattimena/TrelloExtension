@@ -11,14 +11,22 @@ data class RequestInfo(
 
     fun GetKey(): String {
         if (key.isEmpty()) {
-            key = headers["key"]!!
+            if (headers["key"] == null) {
+                throw MissingHeaderException("You did not provide a key when it was required")
+            } else {
+                key = headers["key"]!!
+            }
         }
         return key
     }
 
     fun GetToken(): String {
         if (token.isEmpty()) {
-            token = headers["token"]!!
+            if (headers["token"] == null) {
+                throw MissingHeaderException("You did not provide a token when it was required")
+            } else {
+                token = headers["token"]!!
+            }
         }
         return token
     }
