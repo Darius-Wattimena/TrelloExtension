@@ -11,14 +11,14 @@ data class RequestInfo(
 
     fun GetKey(): String {
         if (key.isEmpty()) {
-            key = headers["key"].toString()
+            key = headers["key"]!!
         }
         return key
     }
 
     fun GetToken(): String {
         if (token.isEmpty()) {
-            token = headers["token"].toString()
+            token = headers["token"]!!
         }
         return token
     }

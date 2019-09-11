@@ -30,16 +30,16 @@ class DayProcessor() {
 
             val cards = JsonHelper.fromJson(gson, listCall, client, Array<Card>::class.java)
 
-            val point = getAmount(list, cards, """\[[+-]?(\d*\.)?\d+\]""", "[", "]", doneListId)
-            val hours = getAmount(list, cards, """\([+-]?(\d*\.)?\d+\)""", "(", ")", doneListId)
+            val hours = getAmount(list, cards, """\[[+-]?(\d*\.)?\d+\]""", "[", "]", doneListId)
+            val points = getAmount(list, cards, """\([+-]?(\d*\.)?\d+\)""", "(", ")", doneListId)
 
             if (list.id == doneListId) {
-                bcDetails.donePoint += point.toInt()
+                bcDetails.donePoints += points.toInt()
                 bcDetails.doneItems += cards.size
                 bcDetails.doneHoursSpend += hours
             }
 
-            bcDetails.point += point.toInt()
+            bcDetails.points += points.toInt()
             bcDetails.items += cards.size
             bcDetails.hoursSpend += hours
         }
@@ -50,10 +50,10 @@ class DayProcessor() {
     fun convertToBurndownChartItem(bcDetails: BurndownChartDetails, epochDate: Long): BurndownChartItem {
         return BurndownChartItem(
             epochDate,
-            bcDetails.donePoint,
+            bcDetails.donePoints,
             bcDetails.doneItems,
             bcDetails.doneHoursSpend,
-            bcDetails.point,
+            bcDetails.points,
             bcDetails.items,
             bcDetails.hoursSpend,
             bcDetails.missingInfo
@@ -76,9 +76,10 @@ class DayProcessor() {
                 val resultString = result.value.removeSurrounding(prefix, suffix)
                 val resultValue = resultString.toFloat()
                 resultTotal += resultValue
+                /* TODO fix logic
                 if (resultValue == 0f && list.id == doneListId) {
                     processZeroHoursOnDoneItem(card, resultString)
-                }
+                }*/
 
             } else {
                 processMissingInfo(card)

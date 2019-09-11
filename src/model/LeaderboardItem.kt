@@ -5,11 +5,11 @@ data class LeaderboardItem(
     val memberId: String,
     val name: String,
     var avatarUrl: String?,
-    var assignedTasks: Int,
-    var doingTasks: Int,
-    var doneTasks: Int,
-    var testingTasks: Int,
-    var reviewingTasks: Int,
-    var startDate: Long,
-    var endDate: Long
+    var assignedTasks: Int = 0,
+    var doingTasks: Int = 0,
+    var doneTasks: Int = 0,
+    var testingTasks: Int = 0,
+    var reviewingTasks: Int = 0,
+    var startDate: Long = 0L,
+    var endDate: Long = 0L
 )

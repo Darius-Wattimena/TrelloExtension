@@ -7,7 +7,9 @@ import io.ktor.routing.Routing
 import io.ktor.routing.get
 import io.ktor.routing.route
 import nl.teqplay.trelloextension.RequestExecuter
+import nl.teqplay.trelloextension.helper.MissingHeaderException
 import nl.teqplay.trelloextension.helper.RequestInfo
+import nl.teqplay.trelloextension.model.LeaderboardLists
 import nl.teqplay.trelloextension.model.SprintDates
 import nl.teqplay.trelloextension.service.board.GetBoard
 import nl.teqplay.trelloextension.service.board.GetBoardStatistics
@@ -55,26 +57,30 @@ fun Routing.boardRouting() {
         }
 
         get("{id}/burndownchartinfo") {
-            val request = RequestInfo(call.request.headers, call.parameters["id"]!!)
             val startDate = call.request.headers["startDate"]
             val endDate = call.request.headers["endDate"]
-            val sprintDates = SprintDates(startDate, endDate)
 
-            call.respondText(
-                RequestExecuter.execute(
-                    GetBurndownChartInfo(
-                        request,
-                        sprintDates
-                    )
-                ),
-                contentType = ContentType.Application.Json
-            )
+            if (startDate == null || endDate == null) {
+                throw MissingHeaderException("You didn't provide a startDate or endDate value in the headers")
+            } else {
+                val sprintDates = SprintDates(startDate, endDate)
+                call.respondText(
+                    RequestExecuter.execute(GetBurndownChartInfo(sprintDates)),
+                    contentType = ContentType.Application.Json
+                )
+            }
+
+
         }
 
         get("{id}/sync/burndownchartinfo") {
             val request = RequestInfo(call.request.headers, call.parameters["id"]!!)
             val doneListId = call.request.headers["doneListId"]
             val today = call.request.headers["today"]
+            if (doneListId == null || today == null) {
+                throw MissingHeaderException("You didn't provide a doneListId or today value in the headers")
+            }
+
             call.respondText(
                 RequestExecuter.execute(
                     SyncBurndownChartInfo(
@@ -95,20 +101,30 @@ fun Routing.boardRouting() {
             val reviewingListId = call.request.headers["reviewingListId"]
             val startDate = call.request.headers["startDate"]
             val endDate = call.request.headers["endDate"]
-            call.respondText(
-                RequestExecuter.execute(
-                    SyncBoardLeaderboardData(
-                        request,
-                        doneListId.toString(),
-                        doingListId.toString(),
-                        testingListId.toString(),
-                        reviewingListId.toString(),
-                        startDate.toString(),
-                        endDate.toString()
-                    )
-                ),
-                contentType = ContentType.Application.Json
+            val leaderboardLists = LeaderboardLists(
+                doneListId.toString(),
+                doingListId.toString(),
+                testingListId.toString(),
+                reviewingListId.toString()
             )
+            if (doneListId == null || doingListId == null || testingListId == null || reviewingListId == null) {
+                throw MissingHeaderException("You didn't provide all the 4 different list ids in the headers")
+            }
+            if (startDate == null || endDate == null) {
+                throw MissingHeaderException("You didn't provide a startDate or endDate value in the headers")
+            } else {
+                val sprintDates = SprintDates(startDate, endDate)
+                call.respondText(
+                    RequestExecuter.execute(
+                        SyncBoardLeaderboardData(
+                            request,
+                            leaderboardLists,
+                            sprintDates
+                        )
+                    ),
+                    contentType = ContentType.Application.Json
+                )
+            }
         }
 
         get("{id}/leaderboard") {
