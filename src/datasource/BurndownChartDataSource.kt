@@ -22,6 +22,9 @@ object BurndownChartDataSource {
 
     fun updateWhenBurndownChartItemDateIsFoundOtherwiseInsert(item: BurndownChartItem, database: Database.Companion.DatabaseImpl) {
         val collection = database.burndownChartItemCollection
-        collection.updateOne(BurndownChartItem::date eq item.date, item)
+        val updateResult = collection.updateOne(BurndownChartItem::date eq item.date, item)
+        if (updateResult.matchedCount == 0L) {
+            collection.insertOne(item)
+        }
     }
 }
