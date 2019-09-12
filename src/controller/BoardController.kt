@@ -9,7 +9,7 @@ import io.ktor.routing.route
 import nl.teqplay.trelloextension.RequestExecuter
 import nl.teqplay.trelloextension.helper.MissingHeaderException
 import nl.teqplay.trelloextension.helper.RequestInfo
-import nl.teqplay.trelloextension.model.LeaderboardLists
+import nl.teqplay.trelloextension.model.SprintLists
 import nl.teqplay.trelloextension.model.SprintDates
 import nl.teqplay.trelloextension.service.board.GetBoard
 import nl.teqplay.trelloextension.service.board.GetBoardStatistics
@@ -21,6 +21,8 @@ import nl.teqplay.trelloextension.service.leaderboard.GetLeaderboardData
 import nl.teqplay.trelloextension.service.leaderboard.SyncBoardLeaderboardData
 import nl.teqplay.trelloextension.service.member.GetBoardMembers
 import nl.teqplay.trelloextension.service.member.SyncMembers
+import nl.teqplay.trelloextension.service.statistic.GetTeamStatistics
+import nl.teqplay.trelloextension.service.statistic.SyncTeamStatistics
 
 fun Routing.boardRouting() {
     route("board/") {
@@ -101,19 +103,19 @@ fun Routing.boardRouting() {
             val reviewingListId = call.request.headers["reviewingListId"]
             val startDate = call.request.headers["startDate"]
             val endDate = call.request.headers["endDate"]
-            val leaderboardLists = LeaderboardLists(
-                doneListId.toString(),
-                doingListId.toString(),
-                testingListId.toString(),
-                reviewingListId.toString()
-            )
             if (doneListId == null || doingListId == null || testingListId == null || reviewingListId == null) {
                 throw MissingHeaderException("You didn't provide all the 4 different list ids in the headers")
             }
-            if (startDate == null || endDate == null) {
+            else if (startDate == null || endDate == null) {
                 throw MissingHeaderException("You didn't provide a startDate or endDate value in the headers")
             } else {
                 val sprintDates = SprintDates(startDate, endDate)
+                val leaderboardLists = SprintLists(
+                    doneListId,
+                    doingListId,
+                    testingListId,
+                    reviewingListId
+                )
                 call.respondText(
                     RequestExecuter.execute(
                         SyncBoardLeaderboardData(
@@ -158,6 +160,51 @@ fun Routing.boardRouting() {
                 RequestExecuter.execute(SyncMembers(request)),
                 contentType = ContentType.Application.Json
             )
+        }
+
+        get("{id}/sync/teamstatistics") {
+            val request = RequestInfo(call.request.headers, call.parameters["id"]!!)
+            val doneListId = call.request.headers["doneListId"]
+            val doingListId = call.request.headers["doingListId"]
+            val testingListId = call.request.headers["testingListId"]
+            val reviewingListId = call.request.headers["reviewingListId"]
+            val today = call.request.headers["today"]
+
+            if (doneListId == null || doingListId == null || testingListId == null || reviewingListId == null) {
+                throw MissingHeaderException("You didn't provide all the 4 different list ids in the headers")
+            }
+            else if (today == null) {
+                throw MissingHeaderException("You didn't provide a today value in the headers")
+            } else {
+
+                val leaderboardLists = SprintLists(
+                    doneListId,
+                    doingListId,
+                    testingListId,
+                    reviewingListId
+                )
+
+                call.respondText(
+                    RequestExecuter.execute(SyncTeamStatistics(request, today, leaderboardLists)),
+                    contentType = ContentType.Application.Json
+                )
+            }
+        }
+
+        get("{id}/teamstatistics") {
+            val startDate = call.request.headers["startDate"]
+            val endDate = call.request.headers["endDate"]
+
+            if (startDate == null || endDate == null) {
+                throw MissingHeaderException("You didn't provide a startDate or endDate value in the headers")
+            } else {
+                val sprintDates = SprintDates(startDate, endDate)
+
+                call.respondText(
+                    RequestExecuter.execute(GetTeamStatistics(call.parameters["id"]!!, sprintDates)),
+                    contentType = ContentType.Application.Json
+                )
+            }
         }
     }
 }

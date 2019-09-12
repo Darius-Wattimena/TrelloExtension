@@ -31,13 +31,22 @@ TrelloExtension is a backend server that uses the trello api to process data and
 
 One of the most used calls are to receive the board data. In all the call {id} means the board ID that can be found when accessing a board on Trello.
 
-| Call                               |                           Headers                            | Response                                                     |
-| ---------------------------------- | :----------------------------------------------------------: | ------------------------------------------------------------ |
-| /board/{id}                        |                          key, token                          | Returns a Board object                                       |
-| /board/{id}/detailed               |                          key, token                          | Returns a Board object and loads all the lists and cards associated with it |
-| /board/{id}/statistics             |                          key, token                          | Returns a Statistics object and counts every label found on each list |
-| /board/{id}/lastaction             |                          key, token                          | Returns a Action object thats the last executed action       |
-| /board/{id}/burndownchartinfo      | key, token, <br />doneListId,<br />startDate, endDate, today | Returns a BurndownChart object that contains a BurndownChartItem for day. That's needed to generate a BurndownChart |
-| /board/{id}/todayburndownchartinfo |           key, token,<br />doneListId,<br />today            | Returns a BurndownChartItem object                           |
-| /board/{id}/leaderboard            |                      startDate, endDate                      | Returns a Leaderboard object that contains a LeaderboardItem for every board member |
+| Call                          |       Headers       | Response                                                     |
+| ----------------------------- | :-----------------: | ------------------------------------------------------------ |
+| /board/{id}                   |     key, token      | Returns a Board object                                       |
+| /board/{id}/detailed          |     key, token      | Returns a Board object and loads all the lists and cards associated with it |
+| /board/{id}/statistics        |     key, token      | Returns a Statistics object and counts every label found on each list |
+| /board/{id}/lastaction        |     key, token      | Returns a Action object thats the last executed action       |
+| /board/{id}/burndownchartinfo | startDate, endDate, | Returns a BurndownChart object that contains a BurndownChartItem for every day that has been saved in the database |
+| /board/{id}/leaderboard       | startDate, endDate  | Returns a Leaderboard object that contains a LeaderboardItem for every board member |
 
+
+
+### Sync API calls
+
+Temporary calls that will be removed in the future and replaced by a service that's running once every x hours.
+
+| Call                               |            Headers            | Response                                                     |
+| ---------------------------------- | :---------------------------: | ------------------------------------------------------------ |
+| /board/{id}/sync/burndownchartinfo | key, token, doneListId, today | Makes a snapshot of all the needed data to show a burndownchart, returns a status message when the sync has been run successfully. |
+| /board/{id}/sync/leaderboard       |      startDate, endDate       | returns a status message when the sync has been run successfully. |

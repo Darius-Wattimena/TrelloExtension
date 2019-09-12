@@ -13,7 +13,7 @@ import nl.teqplay.trelloextension.service.BaseTrelloRequest
 
 class SyncBoardLeaderboardData(
     val requestInfo: RequestInfo,
-    private val leaderboardLists: LeaderboardLists,
+    private val sprintLists: SprintLists,
     private val sprintDates: SprintDates
 ) : BaseTrelloRequest<String>() {
     private val db = Database.instance
@@ -37,7 +37,7 @@ class SyncBoardLeaderboardData(
 
         lists.forEach { list ->
             val cards = getAllCardsOfAList(list.id, requestInfo)
-            processLeaderboardDataFromCards(cards, list.id, leaderboardLists, resultItems)
+            processLeaderboardDataFromCards(cards, list.id, sprintLists, resultItems)
         }
 
         resultItems.map {
@@ -82,16 +82,16 @@ class SyncBoardLeaderboardData(
         return JsonHelper.fromJson(gson, listCall, client, Array<Card>::class.java)
     }
 
-    private fun processLeaderboardDataFromCards(cards: Array<Card>, listId: String, leaderboardLists: LeaderboardLists, resultItems: HashMap<String, LeaderboardItem>) {
+    private fun processLeaderboardDataFromCards(cards: Array<Card>, listId: String, sprintLists: SprintLists, resultItems: HashMap<String, LeaderboardItem>) {
         for (card in cards) {
             for (cardMember in card.members) {
                 val leaderBoardItem = resultItems[cardMember.id]
                 if (leaderBoardItem != null) {
                     when (listId) {
-                        leaderboardLists.doneListId -> leaderBoardItem.doneTasks++
-                        leaderboardLists.doingListId -> leaderBoardItem.doingTasks++
-                        leaderboardLists.testingListId -> leaderBoardItem.testingTasks++
-                        leaderboardLists.reviewingListId -> leaderBoardItem.reviewingTasks++
+                        sprintLists.doneListId -> leaderBoardItem.doneTasks++
+                        sprintLists.doingListId -> leaderBoardItem.doingTasks++
+                        sprintLists.testingListId -> leaderBoardItem.testingTasks++
+                        sprintLists.reviewingListId -> leaderBoardItem.reviewingTasks++
                     }
                     leaderBoardItem.assignedTasks++
                 }

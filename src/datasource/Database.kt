@@ -4,6 +4,7 @@ import nl.teqplay.trelloextension.Constants
 import nl.teqplay.trelloextension.model.BurndownChartItem
 import nl.teqplay.trelloextension.model.LeaderboardItem
 import nl.teqplay.trelloextension.model.Member
+import nl.teqplay.trelloextension.model.TeamStatistics
 import org.litote.kmongo.KMongo
 import org.litote.kmongo.getCollection
 
@@ -18,6 +19,7 @@ class Database {
             val burndownChartItemCollection = database.getCollection<BurndownChartItem>()
             val memberCollection = database.getCollection<Member>()
             val leaderboardItemCollection = database.getCollection<LeaderboardItem>()
+            val teamStatisticsCollection = database.getCollection<TeamStatistics>()
         }
     }
 }
