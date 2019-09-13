@@ -154,14 +154,6 @@ fun Routing.boardRouting() {
             )
         }
 
-        get("{id}/sync/members") {
-            val request = RequestInfo(call.request.headers, call.parameters["id"]!!)
-            call.respondText(
-                RequestExecuter.execute(SyncMembers(request)),
-                contentType = ContentType.Application.Json
-            )
-        }
-
         get("{id}/sync/teamstatistics") {
             val request = RequestInfo(call.request.headers, call.parameters["id"]!!)
             val doneListId = call.request.headers["doneListId"]

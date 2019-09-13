@@ -10,12 +10,12 @@ import nl.teqplay.trelloextension.datasource.MemberDataSource
 import nl.teqplay.trelloextension.service.BaseTrelloRequest
 import org.litote.kmongo.eq
 
-class SyncMembers(private val requestInfo: RequestInfo) : BaseTrelloRequest<String>() {
-    private val call = TrelloCall(requestInfo.GetKey(), requestInfo.GetToken())
+class SyncMembers(private val boardId: String, apiKey: String, token: String) : BaseTrelloRequest<String>() {
+    private val call = TrelloCall(apiKey, token)
     private val db = Database.instance
 
     override fun prepare() {
-        call.request = "/boards/${requestInfo.id}/members"
+        call.request = "/boards/$boardId/members"
         call.parameters["fields"] = "fullName,name,role,avatarUrl,url"
     }
 
