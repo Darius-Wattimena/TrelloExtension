@@ -5,7 +5,10 @@ import io.ktor.application.call
 import io.ktor.application.install
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.apache.Apache
+import io.ktor.features.CORS
 import io.ktor.features.StatusPages
+import io.ktor.http.HttpHeaders
+import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.ktor.response.respond
 import io.ktor.routing.route
@@ -41,6 +44,25 @@ fun Application.module(testing: Boolean = false) {
         }
     }
 
+    install(CORS) {
+        allowNonSimpleContentTypes = true
+
+        host("localhost:3000", listOf("http", "https"))
+        host("localhost:8080", listOf("http", "https"))
+        //TODO add frontend host
+
+        method(HttpMethod.Get)
+        method(HttpMethod.Post)
+        method(HttpMethod.Put)
+        method(HttpMethod.Delete)
+        method(HttpMethod.Options)
+
+        header(HttpHeaders.Authorization)
+        header(HttpHeaders.AccessControlAllowOrigin)
+        header(HttpHeaders.AccessControlRequestHeaders)
+        header(HttpHeaders.AccessControlRequestMethod)
+    }
+
     val client = HttpClient(Apache) {
     }
 
@@ -51,6 +73,7 @@ fun Application.module(testing: Boolean = false) {
             this@routing.cardRouting()
             this@routing.memberRouting()
             this@routing.actionRouting()
+            this@routing.configRouting()
         }
     }
 }

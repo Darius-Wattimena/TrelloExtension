@@ -1,9 +1,9 @@
 package nl.teqplay.trelloextension.helper
 
-import io.ktor.http.Headers
+import io.ktor.http.Parameters
 
 data class RequestInfo(
-    val headers: Headers,
+    val parameters: Parameters,
     var id: String = ""
 ) {
     private var key: String = ""
@@ -11,10 +11,10 @@ data class RequestInfo(
 
     fun GetKey(): String {
         if (key.isEmpty()) {
-            if (headers["key"] == null) {
+            if (parameters["key"] == null) {
                 throw MissingHeaderException("You did not provide a key when it was required")
             } else {
-                key = headers["key"]!!
+                key = parameters["key"]!!
             }
         }
         return key
@@ -22,10 +22,10 @@ data class RequestInfo(
 
     fun GetToken(): String {
         if (token.isEmpty()) {
-            if (headers["token"] == null) {
+            if (parameters["token"] == null) {
                 throw MissingHeaderException("You did not provide a token when it was required")
             } else {
-                token = headers["token"]!!
+                token = parameters["token"]!!
             }
         }
         return token

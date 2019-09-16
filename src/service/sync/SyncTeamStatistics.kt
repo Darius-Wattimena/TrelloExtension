@@ -1,4 +1,4 @@
-package nl.teqplay.trelloextension.service.statistic
+package nl.teqplay.trelloextension.service.sync
 
 import nl.teqplay.trelloextension.Constants
 import nl.teqplay.trelloextension.datasource.Database

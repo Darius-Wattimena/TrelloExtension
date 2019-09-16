@@ -14,7 +14,8 @@ import nl.teqplay.trelloextension.service.card.GetCard
 fun Routing.cardRouting() {
     route("card/") {
         get("{id}") {
-            val request = RequestInfo(call.request.headers, call.parameters["id"]!!)
+            val queryParameters = call.request.queryParameters
+            val request = RequestInfo(queryParameters, call.parameters["id"]!!)
             call.respondText(
                 RequestExecuter.execute(GetCard(request)),
                 contentType = ContentType.Application.Json
@@ -22,7 +23,8 @@ fun Routing.cardRouting() {
         }
 
         get("{id}/actions") {
-            val request = RequestInfo(call.request.headers, call.parameters["id"]!!)
+            val queryParameters = call.request.queryParameters
+            val request = RequestInfo(queryParameters, call.parameters["id"]!!)
             call.respondText(
                 RequestExecuter.execute(GetCardActions(request)),
                 contentType = ContentType.Application.Json

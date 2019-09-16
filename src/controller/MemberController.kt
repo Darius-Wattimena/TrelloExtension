@@ -13,7 +13,8 @@ import nl.teqplay.trelloextension.service.member.GetMember
 fun Routing.memberRouting() {
     route("member/") {
         get("{id}") {
-            val request = RequestInfo(call.request.headers, call.parameters["id"]!!)
+            val queryParameters = call.request.queryParameters
+            val request = RequestInfo(queryParameters, call.parameters["id"]!!)
             call.respondText(
                 RequestExecuter.execute(GetMember(request)),
                 contentType = ContentType.Application.Json

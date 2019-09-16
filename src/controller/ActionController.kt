@@ -13,7 +13,8 @@ import nl.teqplay.trelloextension.service.action.GetAction
 fun Routing.actionRouting() {
     route("action/") {
         get("{id}") {
-            val request = RequestInfo(call.request.headers, call.parameters["id"]!!)
+            val queryParameters = call.request.queryParameters
+            val request = RequestInfo(queryParameters, call.parameters["id"]!!)
             call.respondText(
                 RequestExecuter.execute(GetAction(request)),
                 contentType = ContentType.Application.Json

@@ -14,7 +14,8 @@ import nl.teqplay.trelloextension.service.list.GetList
 fun Routing.listRouting() {
     route("list") {
         get("{id}") {
-            val request = RequestInfo(call.request.headers, call.parameters["id"]!!)
+            val queryParameters = call.request.queryParameters
+            val request = RequestInfo(queryParameters, call.parameters["id"]!!)
             call.respondText(
                 RequestExecuter.execute(GetList(request)),
                 contentType = ContentType.Application.Json
@@ -22,7 +23,8 @@ fun Routing.listRouting() {
         }
 
         get("{id}/detailed") {
-            val request = RequestInfo(call.request.headers, call.parameters["id"]!!)
+            val queryParameters = call.request.queryParameters
+            val request = RequestInfo(queryParameters, call.parameters["id"]!!)
             call.respondText(
                 RequestExecuter.execute(GetDetailedList(request)),
                 contentType = ContentType.Application.Json

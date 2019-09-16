@@ -16,18 +16,18 @@ import nl.teqplay.trelloextension.service.board.GetBoardStatistics
 import nl.teqplay.trelloextension.service.board.GetDetailedBoard
 import nl.teqplay.trelloextension.service.board.GetLastBoardAction
 import nl.teqplay.trelloextension.service.burndownchart.GetBurndownChartInfo
-import nl.teqplay.trelloextension.service.burndownchart.SyncBurndownChartInfo
+import nl.teqplay.trelloextension.service.sync.SyncBurndownChartInfo
 import nl.teqplay.trelloextension.service.leaderboard.GetLeaderboardData
-import nl.teqplay.trelloextension.service.leaderboard.SyncBoardLeaderboardData
+import nl.teqplay.trelloextension.service.sync.SyncBoardLeaderboardData
 import nl.teqplay.trelloextension.service.member.GetBoardMembers
-import nl.teqplay.trelloextension.service.member.SyncMembers
 import nl.teqplay.trelloextension.service.statistic.GetTeamStatistics
-import nl.teqplay.trelloextension.service.statistic.SyncTeamStatistics
+import nl.teqplay.trelloextension.service.sync.SyncTeamStatistics
 
 fun Routing.boardRouting() {
     route("board/") {
         get("{id}") {
-            val request = RequestInfo(call.request.headers, call.parameters["id"]!!)
+            val queryParameters = call.request.queryParameters
+            val request = RequestInfo(queryParameters, call.parameters["id"]!!)
             call.respondText(
                 RequestExecuter.execute(GetBoard(request)),
                 contentType = ContentType.Application.Json
@@ -35,7 +35,8 @@ fun Routing.boardRouting() {
         }
 
         get("{id}/detailed") {
-            val request = RequestInfo(call.request.headers, call.parameters["id"]!!)
+            val queryParameters = call.request.queryParameters
+            val request = RequestInfo(queryParameters, call.parameters["id"]!!)
             call.respondText(
                 RequestExecuter.execute(GetDetailedBoard(request)),
                 contentType = ContentType.Application.Json
@@ -43,7 +44,8 @@ fun Routing.boardRouting() {
         }
 
         get("{id}/statistics") {
-            val request = RequestInfo(call.request.headers, call.parameters["id"]!!)
+            val queryParameters = call.request.queryParameters
+            val request = RequestInfo(queryParameters, call.parameters["id"]!!)
             call.respondText(
                 RequestExecuter.execute(GetBoardStatistics(request)),
                 contentType = ContentType.Application.Json
@@ -51,7 +53,8 @@ fun Routing.boardRouting() {
         }
 
         get("{id}/getLastAction") {
-            val request = RequestInfo(call.request.headers, call.parameters["id"]!!)
+            val queryParameters = call.request.queryParameters
+            val request = RequestInfo(queryParameters, call.parameters["id"]!!)
             call.respondText(
                 RequestExecuter.execute(GetLastBoardAction(request)),
                 contentType = ContentType.Application.Json
@@ -59,8 +62,9 @@ fun Routing.boardRouting() {
         }
 
         get("{id}/burndownchartinfo") {
-            val startDate = call.request.headers["startDate"]
-            val endDate = call.request.headers["endDate"]
+            val queryParameters = call.request.queryParameters
+            val startDate = queryParameters["startDate"]
+            val endDate = queryParameters["endDate"]
 
             if (startDate == null || endDate == null) {
                 throw MissingHeaderException("You didn't provide a startDate or endDate value in the headers")
@@ -76,9 +80,10 @@ fun Routing.boardRouting() {
         }
 
         get("{id}/sync/burndownchartinfo") {
-            val request = RequestInfo(call.request.headers, call.parameters["id"]!!)
-            val doneListId = call.request.headers["doneListId"]
-            val today = call.request.headers["today"]
+            val queryParameters = call.request.queryParameters
+            val request = RequestInfo(queryParameters, call.parameters["id"]!!)
+            val doneListId = queryParameters["doneListId"]
+            val today = queryParameters["today"]
             if (doneListId == null || today == null) {
                 throw MissingHeaderException("You didn't provide a doneListId or today value in the headers")
             }
@@ -96,13 +101,14 @@ fun Routing.boardRouting() {
         }
 
         get("{id}/sync/leaderboard") {
-            val request = RequestInfo(call.request.headers, call.parameters["id"]!!)
-            val doneListId = call.request.headers["doneListId"]
-            val doingListId = call.request.headers["doingListId"]
-            val testingListId = call.request.headers["testingListId"]
-            val reviewingListId = call.request.headers["reviewingListId"]
-            val startDate = call.request.headers["startDate"]
-            val endDate = call.request.headers["endDate"]
+            val queryParameters = call.request.queryParameters
+            val request = RequestInfo(queryParameters, call.parameters["id"]!!)
+            val doneListId = queryParameters["doneListId"]
+            val doingListId = queryParameters["doingListId"]
+            val testingListId = queryParameters["testingListId"]
+            val reviewingListId = queryParameters["reviewingListId"]
+            val startDate = queryParameters["startDate"]
+            val endDate = queryParameters["endDate"]
             if (doneListId == null || doingListId == null || testingListId == null || reviewingListId == null) {
                 throw MissingHeaderException("You didn't provide all the 4 different list ids in the headers")
             }
@@ -130,8 +136,9 @@ fun Routing.boardRouting() {
         }
 
         get("{id}/leaderboard") {
-            val startDate = call.request.headers["startDate"]
-            val endDate = call.request.headers["endDate"]
+            val queryParameters = call.request.queryParameters
+            val startDate = queryParameters["startDate"]
+            val endDate = queryParameters["endDate"]
             call.respondText(
                 RequestExecuter.execute(
                     GetLeaderboardData(
@@ -147,7 +154,8 @@ fun Routing.boardRouting() {
 
 
         get("{id}/members") {
-            val request = RequestInfo(call.request.headers, call.parameters["id"]!!)
+            val queryParameters = call.request.queryParameters
+            val request = RequestInfo(queryParameters, call.parameters["id"]!!)
             call.respondText(
                 RequestExecuter.execute(GetBoardMembers(request)),
                 contentType = ContentType.Application.Json
@@ -155,12 +163,13 @@ fun Routing.boardRouting() {
         }
 
         get("{id}/sync/teamstatistics") {
-            val request = RequestInfo(call.request.headers, call.parameters["id"]!!)
-            val doneListId = call.request.headers["doneListId"]
-            val doingListId = call.request.headers["doingListId"]
-            val testingListId = call.request.headers["testingListId"]
-            val reviewingListId = call.request.headers["reviewingListId"]
-            val today = call.request.headers["today"]
+            val queryParameters = call.request.queryParameters
+            val request = RequestInfo(queryParameters, call.parameters["id"]!!)
+            val doneListId = queryParameters["doneListId"]
+            val doingListId = queryParameters["doingListId"]
+            val testingListId = queryParameters["testingListId"]
+            val reviewingListId = queryParameters["reviewingListId"]
+            val today = queryParameters["today"]
 
             if (doneListId == null || doingListId == null || testingListId == null || reviewingListId == null) {
                 throw MissingHeaderException("You didn't provide all the 4 different list ids in the headers")
@@ -177,15 +186,22 @@ fun Routing.boardRouting() {
                 )
 
                 call.respondText(
-                    RequestExecuter.execute(SyncTeamStatistics(request, today, leaderboardLists)),
+                    RequestExecuter.execute(
+                        SyncTeamStatistics(
+                            request,
+                            today,
+                            leaderboardLists
+                        )
+                    ),
                     contentType = ContentType.Application.Json
                 )
             }
         }
 
         get("{id}/teamstatistics") {
-            val startDate = call.request.headers["startDate"]
-            val endDate = call.request.headers["endDate"]
+            val queryParameters = call.request.queryParameters
+            val startDate = queryParameters["startDate"]
+            val endDate = queryParameters["endDate"]
 
             if (startDate == null || endDate == null) {
                 throw MissingHeaderException("You didn't provide a startDate or endDate value in the headers")

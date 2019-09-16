@@ -1,13 +1,12 @@
-package nl.teqplay.trelloextension.service.burndownchart
+package nl.teqplay.trelloextension.service.sync
 
 import nl.teqplay.trelloextension.Constants
 import nl.teqplay.trelloextension.datasource.BurndownChartDataSource
 import nl.teqplay.trelloextension.helper.RequestInfo
 import nl.teqplay.trelloextension.helper.TrelloCall
-import nl.teqplay.trelloextension.model.BurndownChartDetails
-import nl.teqplay.trelloextension.model.BurndownChartItem
 import nl.teqplay.trelloextension.datasource.Database
 import nl.teqplay.trelloextension.service.BaseTrelloRequest
+import nl.teqplay.trelloextension.service.burndownchart.DayProcessor
 import java.sql.Date
 import java.time.LocalDate
 
