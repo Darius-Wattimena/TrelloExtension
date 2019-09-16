@@ -3,10 +3,9 @@
 # Check https://circleci.com/docs/2.0/language-java/ for more details
 #
   ​
-defaults: &defaults
-  working_directory: ~/repo
-  docker:
-    - image: circleci/openjdk:8-jdk
+working_directory: ~/repo
+docker:
+  - image: circleci/openjdk:8-jdk
   ​
   ​
 version: 2
