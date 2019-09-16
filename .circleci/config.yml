@@ -99,7 +99,7 @@ workflows:
   build-approve-deploy:
     jobs:
       - build:
-          context: common-builds-context
+          context: builds-students
       - hold:
           type: approval
           requires:
@@ -112,4 +112,4 @@ workflows:
       - deploy:
           requires:
             - hold
-          context: common-builds-context
+          context: builds-students
