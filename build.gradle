@@ -1,17 +1,22 @@
 buildscript {
     repositories {
         jcenter()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
     }
     
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "org.akhikhl.gretty:gretty:$gretty_version"
+        classpath "gradle.plugin.fi.evident.gradle.beanstalk:gradle-beanstalk-plugin:0.2.2"
     }
 }
 
 apply plugin: 'kotlin'
 apply plugin: 'war'
 apply plugin: 'org.akhikhl.gretty'
+apply plugin: "fi.evident.beanstalk"
 apply plugin: 'application'
 
 group 'nl.teqplay'
@@ -61,4 +66,16 @@ task runWar
 
 afterEvaluate {
     runWar.dependsOn(tasks.findByName("appRun"))
+}
+
+beanstalk {
+    s3Endpoint = "s3-eu-west-1.amazonaws.com"
+    beanstalkEndpoint = "elasticbeanstalk.eu-west-1.amazonaws.com"
+    deployments {
+        staging {
+            file = "build/libs/trelloextension-${version}.war"
+            application = "students"
+            environment = "trelloextension"
+        }
+    }
 }

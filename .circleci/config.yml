@@ -98,12 +98,7 @@ jobs:
 
       - run:
           name: Deploy to Elastic Beanstalk
-          command: |
-            if [ "${CIRCLE_BRANCH}" == "master" ]; then
-              gradle deployProduction
-            else
-              gradle deployStaging
-            fi
+          command: gradle deployStaging
 
 workflows:
   version: 2
