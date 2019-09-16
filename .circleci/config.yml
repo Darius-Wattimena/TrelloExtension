@@ -2,58 +2,109 @@
 #
 # Check https://circleci.com/docs/2.0/language-java/ for more details
 #
-  ​
+
+defaults: &defaults
+  working_directory: ~/repo
+  docker:
+    - image: circleci/openjdk:8-jdk
+
+
 version: 2
 jobs:
   build:
-    working_directory: ~/repo
-    docker:
-        - image: circleci/openjdk:8-jdk
-      ​
+    <<: *defaults
     environment:
       # Customize the JVM maximum heap limit
       JVM_OPTS: -Xmx3200m
       TERM: dumb
-  ​
-deploy:
-  working_directory: ~/repo
-  docker:
-      - image: circleci/openjdk:8-jdk
-    ​
-  ​
-environment:
-  # Customize the JVM maximum heap limit
-  JVM_OPTS: -Xmx3200m
-  TERM: dumb
-  ​
-steps:
-  - checkout
-  ​
-- attach_workspace:
-    at: ~/repo
-  ​
-# Download and cache dependencies
-- restore_cache:
-    keys:
-      - v1-dependencies-{{ checksum "build.gradle" }}
-      # fallback to using the latest cache if no exact match is found
-      - v1-dependencies-
-  ​
-- run:
-    name: Add AWS credentials
-    command: |
-      FILE=~/.aws/credentials
-      mkdir -p `dirname $FILE`
-      echo "[default]" > $FILE
-      echo "aws_access_key_id = $EB_ACCESS_KEY" >> $FILE
-      echo "aws_secret_access_key = $EB_SECRET_KEY" >> $FILE
-  ​
-- run:
-    name: Deploy to Elastic Beanstalk
-    command: |
-      eb use students --profile eb-cli
-      eb deploy -v --staged --profile eb-cli
-  ​
+
+    steps:
+      - checkout
+
+      # No cash restore - always build fresh
+
+      - run:
+          name: Add S3 keys
+          command: |
+            PROPFILE=~/.gradle/gradle.properties
+            mkdir -p `dirname $PROPFILE`
+            [ -e $PROPFILE ] || touch $PROPFILE
+            grep -q s3_access_key $PROPFILE || echo "s3_access_key = $S3_ACCESS_KEY" >> $PROPFILE
+            grep -q s3_secret_key $PROPFILE || echo "s3_secret_key = $S3_SECRET_KEY" >> $PROPFILE
+
+      - run: gradle dependencies
+
+      - save_cache:
+          paths:
+            - ~/.gradle
+          key: v1-dependencies-{{ checksum "build.gradle" }}
+
+      # run tests and build war file!
+      - run: gradle test build
+
+      - run:
+          name: Save test results
+          command: |
+            mkdir -p ~/tests/junit
+            find . -type f -regex ".*/build/test-results/.*xml" -exec cp {} ~/tests/junit/ \;
+          when: always
+
+      - store_test_results:
+          path: ~/tests
+
+      - persist_to_workspace:
+          root: ~/repo
+          paths:
+            - build
+            - out
+            - ./build/generated-resources/version.properties
+
+      - store_artifacts:
+          path: ./build/libs
+          destination: wars
+
+      - store_artifacts:
+          path: ./build/generated-resources/version.properties
+
+  deploy:
+    <<: *defaults
+
+    environment:
+      # Customize the JVM maximum heap limit
+      JVM_OPTS: -Xmx3200m
+      TERM: dumb
+
+    steps:
+      - checkout
+
+      - attach_workspace:
+          at: ~/repo
+
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "build.gradle" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
+
+      - run:
+          name: Add AWS credentials
+          command: |
+            FILE=~/.aws/credentials
+            mkdir -p `dirname $FILE`
+            echo "[default]" > $FILE
+            echo "aws_access_key_id = $EB_ACCESS_KEY" >> $FILE
+            echo "aws_secret_access_key = $EB_SECRET_KEY" >> $FILE
+
+      - run:
+          name: Deploy to Elastic Beanstalk
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+              gradle deployProduction
+            else
+              gradle deployStaging
+            fi
+
 workflows:
   version: 2
   build-approve-deploy:
