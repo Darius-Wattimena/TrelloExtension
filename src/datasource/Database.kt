@@ -19,8 +19,8 @@ class Database {
             private val config = ConfigFactory.load()
             private val dbConfig = config.getConfig("ktor").getConfig("application").getConfig("db")
             private val dbName = dbConfig.getString("db_name")
-            private val host = dbConfig.getString("host")
-            private val port = dbConfig.getInt("port")
+            private val host = dbConfig.getString("db_host")
+            private val port = dbConfig.getInt("db_port")
             private val username = dbConfig.getString("username")
             private val password = dbConfig.getString("password")
 

@@ -13,22 +13,16 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.response.respond
 import io.ktor.routing.route
 import io.ktor.routing.routing
-import io.ktor.server.engine.commandLineEnvironment
-import io.ktor.server.engine.embeddedServer
-import io.ktor.server.netty.Netty
+import io.ktor.server.tomcat.EngineMain
 import nl.teqplay.trelloextension.controller.*
 import nl.teqplay.trelloextension.helper.MissingHeaderException
 import java.util.*
 
-fun main(args: Array<String>) {
-    embeddedServer(Netty, commandLineEnvironment(args)).start()
-}
-//fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
+fun main(@Suppress("UnusedMainParameter") args: Array<String>) = EngineMain.main(args)
 
 @Suppress("unused") // Referenced in application.conf
 @kotlin.jvm.JvmOverloads
-fun Application.module(testing: Boolean = false) {
-
+fun Application.module(@Suppress("UNUSED_PARAMETER") testing: Boolean = false) {
     install(StatusPages) {
         exception<MissingHeaderException> { cause ->
             cause.message?.let { call.respond(HttpStatusCode.BadRequest, it) }
