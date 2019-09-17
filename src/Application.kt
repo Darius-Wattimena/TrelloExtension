@@ -13,13 +13,16 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.response.respond
 import io.ktor.routing.route
 import io.ktor.routing.routing
-import io.ktor.server.tomcat.EngineMain
+import io.ktor.server.engine.commandLineEnvironment
+import io.ktor.server.engine.embeddedServer
+import io.ktor.server.netty.Netty
 import nl.teqplay.trelloextension.controller.*
 import nl.teqplay.trelloextension.helper.MissingHeaderException
 import java.util.*
 
-fun main(@Suppress("UnusedMainParameter") args: Array<String>) = EngineMain.main(args)
-
+fun main(args: Array<String>) {
+    embeddedServer(Netty, commandLineEnvironment(args)).start()
+}
 @Suppress("unused") // Referenced in application.conf
 @kotlin.jvm.JvmOverloads
 fun Application.module(@Suppress("UNUSED_PARAMETER") testing: Boolean = false) {
