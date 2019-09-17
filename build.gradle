@@ -23,7 +23,7 @@ apply plugin: 'org.akhikhl.gretty'
 apply plugin: "fi.evident.beanstalk"
 
 group 'nl.teqplay'
-version '0.0.6'
+version '0.0.7'
 
 webAppDirName = 'webApp'
 
