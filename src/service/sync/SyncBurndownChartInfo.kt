@@ -11,15 +11,17 @@ import java.sql.Date
 import java.time.LocalDate
 
 class SyncBurndownChartInfo(
-    val requestInfo: RequestInfo,
+    private val boardId: String,
+    private val key: String,
+    private val token: String,
     private val doneListId: String,
     private val today: String
 ) : BaseTrelloRequest<String>() {
-    private val boardCall = TrelloCall(requestInfo.GetKey(), requestInfo.GetToken())
+    private val boardCall = TrelloCall(key, token)
     private val db = Database.instance
 
     override fun prepare() {
-        boardCall.request = "/board/${requestInfo.id}/lists"
+        boardCall.request = "/board/$boardId/lists"
         boardCall.parameters["cards"] = "none"
         boardCall.parameters["fields"] = "none"
     }
@@ -29,7 +31,7 @@ class SyncBurndownChartInfo(
         val todayDate = Date.valueOf(today).time
 
         DayProcessor().run {
-            val details = process(requestInfo, gson, boardCall, client, doneListId)
+            val details = process(key, token, gson, boardCall, client, doneListId)
             convertToBurndownChartItem(details, todayDate)
         }.also {
             BurndownChartDataSource.updateWhenBurndownChartItemDateIsFoundOtherwiseInsert(it, db)

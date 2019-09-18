@@ -15,7 +15,8 @@ class DayProcessor() {
     private val bcDetails = BurndownChartDetails()
 
     suspend fun process(
-        requestInfo: RequestInfo,
+        key: String,
+        token: String,
         gson: Gson,
         boardCall: TrelloCall,
         client: HttpClient,
@@ -24,7 +25,7 @@ class DayProcessor() {
         val lists = JsonHelper.fromJson(gson, boardCall, client, Array<List>::class.java)
 
         for (list in lists) {
-            val listCall = TrelloCall(requestInfo.GetKey(), requestInfo.GetToken())
+            val listCall = TrelloCall(key, token)
             listCall.request = "/lists/${list.id}/cards"
             listCall.parameters["fields"] = "id,name"
 
@@ -76,10 +77,10 @@ class DayProcessor() {
                 val resultString = result.value.removeSurrounding(prefix, suffix)
                 val resultValue = resultString.toFloat()
                 resultTotal += resultValue
-                /* TODO fix logic
+                // TODO fix logic
                 if (resultValue == 0f && list.id == doneListId) {
                     processZeroHoursOnDoneItem(card, resultString)
-                }*/
+                }
 
             } else {
                 processMissingInfo(card)

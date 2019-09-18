@@ -41,6 +41,7 @@ sourceSets {
 
 repositories {
     mavenLocal()
+    mavenCentral()
     jcenter()
     maven { url 'https://kotlin.bintray.com/ktor' }
     maven { url 'https://kotlin.bintray.com/kotlin-js-wrappers' }
@@ -60,6 +61,7 @@ dependencies {
     compile "org.litote.kmongo:kmongo:$kmongo_version"
     testCompile "io.ktor:ktor-server-tests:$ktor_version"
     implementation "io.ktor:ktor-client-json:$ktor_version"
+    implementation "io.ktor:ktor-auth:$ktor_version"
     implementation "com.google.code.gson:gson:$gson_version"
 }
 

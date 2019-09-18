@@ -3,6 +3,7 @@ package nl.teqplay.trelloextension
 import io.ktor.application.Application
 import io.ktor.application.call
 import io.ktor.application.install
+import io.ktor.auth.*
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.apache.Apache
 import io.ktor.features.CORS
@@ -11,6 +12,8 @@ import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.ktor.response.respond
+import io.ktor.response.respondText
+import io.ktor.routing.get
 import io.ktor.routing.route
 import io.ktor.routing.routing
 import io.ktor.server.engine.commandLineEnvironment
@@ -29,6 +32,19 @@ fun Application.module(@Suppress("UNUSED_PARAMETER") testing: Boolean = false) {
     install(StatusPages) {
         exception<MissingHeaderException> { cause ->
             cause.message?.let { call.respond(HttpStatusCode.BadRequest, it) }
+        }
+    }
+
+    install(Authentication) {
+        basic("basicAuth") {
+            realm = "backend-server"
+            validate { credentials ->
+                if (credentials.name == "test") {
+                    UserIdPrincipal(credentials.name)
+                } else {
+                    null
+                }
+            }
         }
     }
 
@@ -73,5 +89,6 @@ fun Application.module(@Suppress("UNUSED_PARAMETER") testing: Boolean = false) {
             this@routing.actionRouting()
             this@routing.configRouting()
         }
+
     }
 }
