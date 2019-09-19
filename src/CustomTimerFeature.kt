@@ -23,6 +23,7 @@ class CustomTimerFeature(configuration: Configuration) {
 
     companion object Feature : ApplicationFeature<ApplicationCallPipeline, Configuration, CustomTimerFeature> {
         override val key = AttributeKey<CustomTimerFeature>("TimerFeature")
+        var timerPrepared = false
 
         override fun install(pipeline: ApplicationCallPipeline, configure: Configuration.() -> Unit): CustomTimerFeature {
             val configuration = Configuration().apply(configure)
@@ -30,7 +31,9 @@ class CustomTimerFeature(configuration: Configuration) {
             val feature = CustomTimerFeature(configuration)
 
             pipeline.intercept(ApplicationCallPipeline.Features) {
-                feature.prepareTimer(feature.scheduler, feature.zonedDateTime)
+                if (!timerPrepared) {
+                    feature.prepareTimer(feature.scheduler, feature.zonedDateTime)
+                }
             }
 
             return feature
@@ -62,6 +65,7 @@ class CustomTimerFeature(configuration: Configuration) {
         if (scheduler != null && zonedDateTime != null) {
             setupTimer(scheduler, zonedDateTime)
         }
+        timerPrepared = true
     }
 
 
