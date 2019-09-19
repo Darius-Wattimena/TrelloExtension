@@ -25,7 +25,7 @@ apply plugin: "fi.evident.beanstalk"
 group 'nl.teqplay'
 version '0.0.8'
 
-webAppDirName = 'KtorServlet'
+webAppDirName = 'webapp'
 
 gretty {
     contextPath = '/'
@@ -66,6 +66,10 @@ dependencies {
 }
 
 kotlin.experimental.coroutines = 'enable'
+
+/*war {
+    webXml = file('src/webapp/WEB-INF/web.xml')
+}*/
 
 task runWar
 
