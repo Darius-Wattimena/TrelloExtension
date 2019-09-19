@@ -25,7 +25,7 @@ apply plugin: "fi.evident.beanstalk"
 group 'nl.teqplay'
 version '0.0.8'
 
-webAppDirName = 'webApp'
+webAppDirName = 'KtorServlet'
 
 gretty {
     contextPath = '/'
