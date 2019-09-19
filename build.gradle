@@ -67,6 +67,10 @@ dependencies {
 
 kotlin.experimental.coroutines = 'enable'
 
+war {
+    version = "${version}-${getDate()}"
+}
+
 task runWar
 
 afterEvaluate {
