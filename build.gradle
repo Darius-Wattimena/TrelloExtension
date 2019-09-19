@@ -67,10 +67,6 @@ dependencies {
 
 kotlin.experimental.coroutines = 'enable'
 
-/*war {
-    webXml = file('src/webapp/WEB-INF/web.xml')
-}*/
-
 task runWar
 
 afterEvaluate {
@@ -82,9 +78,15 @@ beanstalk {
     beanstalkEndpoint = "elasticbeanstalk.eu-west-1.amazonaws.com"
     deployments {
         staging {
-            file = "build/libs/trelloextension-${version}.war"
+            file = "build/libs/trelloextension-${version}-${getDate()}.war"
             application = "students"
             environment = "trelloextension"
         }
     }
+}
+
+static def getDate() {
+    def date = new Date()
+    def formattedDate = date.format('yyyyMMddHHmmss')
+    return formattedDate
 }
