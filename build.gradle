@@ -65,7 +65,8 @@ dependencies {
     implementation "com.google.code.gson:gson:$gson_version"
 }
 
-//kotlin.experimental.coroutines = 'enable'
+kotlin.experimental.coroutines = 'enable'
+
 task runWar
 
 afterEvaluate {

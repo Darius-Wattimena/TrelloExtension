@@ -20,8 +20,11 @@ import io.ktor.server.engine.commandLineEnvironment
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import nl.teqplay.trelloextension.controller.*
-import nl.teqplay.trelloextension.helper.MissingHeaderException
+import nl.teqplay.trelloextension.helper.MissingParameterException
+import java.time.ZoneId
+import java.time.ZonedDateTime
 import java.util.*
+import java.util.concurrent.Executors
 
 fun main(args: Array<String>) {
     embeddedServer(Netty, commandLineEnvironment(args)).start()
@@ -30,7 +33,7 @@ fun main(args: Array<String>) {
 @kotlin.jvm.JvmOverloads
 fun Application.module(@Suppress("UNUSED_PARAMETER") testing: Boolean = false) {
     install(StatusPages) {
-        exception<MissingHeaderException> { cause ->
+        exception<MissingParameterException> { cause ->
             cause.message?.let { call.respond(HttpStatusCode.BadRequest, it) }
         }
     }
@@ -49,12 +52,8 @@ fun Application.module(@Suppress("UNUSED_PARAMETER") testing: Boolean = false) {
     }
 
     install(CustomTimerFeature) {
-        timer = Timer()
-        calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC")).also {
-            it.set(Calendar.HOUR_OF_DAY, 2)
-            it.set(Calendar.MINUTE, 0)
-            it.set(Calendar.SECOND, 0)
-        }
+        scheduler = Executors.newScheduledThreadPool(1)
+        zonedDateTime = ZonedDateTime.now(ZoneId.of("UTC"))
     }
 
     install(CORS) {

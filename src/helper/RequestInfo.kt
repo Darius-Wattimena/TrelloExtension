@@ -12,7 +12,7 @@ data class RequestInfo(
     fun GetKey(): String {
         if (key.isEmpty()) {
             if (parameters["key"] == null) {
-                throw MissingHeaderException("You did not provide a key when it was required")
+                throw MissingParameterException("You did not provide a key when it was required")
             } else {
                 key = parameters["key"]!!
             }
@@ -23,7 +23,7 @@ data class RequestInfo(
     fun GetToken(): String {
         if (token.isEmpty()) {
             if (parameters["token"] == null) {
-                throw MissingHeaderException("You did not provide a token when it was required")
+                throw MissingParameterException("You did not provide a token when it was required")
             } else {
                 token = parameters["token"]!!
             }

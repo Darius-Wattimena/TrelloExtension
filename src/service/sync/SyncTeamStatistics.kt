@@ -5,6 +5,7 @@ import nl.teqplay.trelloextension.datasource.Database
 import nl.teqplay.trelloextension.datasource.StatisticsDataSource
 import nl.teqplay.trelloextension.helper.JsonHelper
 import nl.teqplay.trelloextension.helper.RequestInfo
+import nl.teqplay.trelloextension.helper.TimeHelper
 import nl.teqplay.trelloextension.helper.TrelloCall
 import nl.teqplay.trelloextension.model.List
 import nl.teqplay.trelloextension.model.SprintLists
@@ -12,24 +13,25 @@ import nl.teqplay.trelloextension.model.TeamStatistics
 import nl.teqplay.trelloextension.service.BaseTrelloRequest
 import java.sql.Date
 import java.time.LocalDate
+import java.time.ZoneId
+import java.util.*
 
-class SyncTeamStatistics(private val requestInfo: RequestInfo, private val today: String, private val sprintLists: SprintLists) : BaseTrelloRequest<String>() {
+class SyncTeamStatistics(private val boardId: String, key: String, token: String, private val today: String, private val sprintLists: SprintLists) : BaseTrelloRequest<String>() {
     private val db = Database.instance
-    private val boardCall = TrelloCall(requestInfo.GetKey(), requestInfo.GetToken())
+    private val boardCall = TrelloCall(key, token)
 
     override fun prepare() {
-        boardCall.request = "/boards/${requestInfo.id}/lists"
+        boardCall.request = "/boards/$boardId/lists"
         boardCall.parameters["cards"] = "all"
         boardCall.parameters["card_fields"] = "none"
         boardCall.parameters["fields"] = "none"
     }
 
     override suspend fun execute(): String {
-        val today = LocalDate.parse(today)
-        val todayDate = Date.valueOf(today).time
+        val todayDate = TimeHelper.getISOLocalDateStringToEpochMilliseconds(today)
 
         val lists = JsonHelper.fromJson(gson, boardCall, client, Array<List>::class.java)
-        val resultItem = TeamStatistics(requestInfo.id, todayDate)
+        val resultItem = TeamStatistics(boardId, todayDate)
 
         for (list in lists) {
             when (list.id) {

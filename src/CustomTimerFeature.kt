@@ -3,15 +3,22 @@ package nl.teqplay.trelloextension
 import io.ktor.application.ApplicationCallPipeline
 import io.ktor.application.ApplicationFeature
 import io.ktor.util.AttributeKey
+import nl.teqplay.trelloextension.helper.TimeHelper
+import org.slf4j.LoggerFactory
+import java.time.Duration
+import java.time.ZonedDateTime
 import java.util.*
+import java.util.concurrent.ScheduledExecutorService
+import java.util.concurrent.TimeUnit
 
 class CustomTimerFeature(configuration: Configuration) {
-    val timer = configuration.timer
-    val calendar = configuration.calendar
+    private val logger = LoggerFactory.getLogger(this::class.java)
+    val scheduler = configuration.scheduler
+    val zonedDateTime = configuration.zonedDateTime
 
     class Configuration {
-        var timer : Timer? = null
-        var calendar : Calendar? = null
+        var scheduler : ScheduledExecutorService? = null
+        var zonedDateTime : ZonedDateTime? = null
     }
 
     companion object Feature : ApplicationFeature<ApplicationCallPipeline, Configuration, CustomTimerFeature> {
@@ -23,20 +30,37 @@ class CustomTimerFeature(configuration: Configuration) {
             val feature = CustomTimerFeature(configuration)
 
             pipeline.intercept(ApplicationCallPipeline.Features) {
-                feature.prepareTimer(feature.timer, feature.calendar)
+                feature.prepareTimer(feature.scheduler, feature.zonedDateTime)
             }
 
             return feature
         }
     }
 
-    private fun setupTimer(timer: Timer, calendar: Calendar) {
-        timer.schedule(SyncTimerTask(timer, calendar), calendar.time)
+    private fun setupTimer(scheduler: ScheduledExecutorService, currentDateTime: ZonedDateTime) {
+        var nextZonedDateTime = currentDateTime
+            .withHour(2)
+            .withMinute(0)
+            .withSecond(0)
+        if(currentDateTime > nextZonedDateTime)
+            nextZonedDateTime = nextZonedDateTime.plusDays(1)
+
+        val duration = Duration.between(currentDateTime, nextZonedDateTime)
+        val initialDelay = duration.seconds
+
+        logger.info("Setting up first timer task and run this task in $initialDelay seconds")
+
+        scheduler.scheduleAtFixedRate(
+            SyncTimerTask(scheduler, currentDateTime),
+            initialDelay,
+            TimeUnit.DAYS.toSeconds(1),
+            TimeUnit.SECONDS
+        )
     }
 
-    private fun prepareTimer(timer: Timer?, calendar: Calendar?) {
-        if (timer != null && calendar != null) {
-            setupTimer(timer, calendar)
+    private fun prepareTimer(scheduler: ScheduledExecutorService?, zonedDateTime: ZonedDateTime?) {
+        if (scheduler != null && zonedDateTime != null) {
+            setupTimer(scheduler, zonedDateTime)
         }
     }
 

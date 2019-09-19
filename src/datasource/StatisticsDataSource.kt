@@ -9,15 +9,18 @@ object StatisticsDataSource {
 
     fun findAllTeamStatistics(
         boardId: String,
-        sprintDates: SprintDates,
+        today: Long,
+        lastWorkDay: Long,
         database: Database.Companion.DatabaseImpl
     ): List<TeamStatistics> {
         val collection = database.teamStatisticsCollection
         return collection.find(
             and(
                 TeamStatistics::boardId eq boardId,
-                TeamStatistics::date gte sprintDates.epochStartDate,
-                TeamStatistics::date lte sprintDates.epochEndDate
+                or(
+                    TeamStatistics::date eq today,
+                    TeamStatistics::date eq lastWorkDay
+                )
             )).toList()
     }
 

@@ -1,3 +1,3 @@
 package nl.teqplay.trelloextension.helper
 
-class MissingHeaderException(message: String) : Exception(message)
+class MissingParameterException(message: String) : Exception(message)

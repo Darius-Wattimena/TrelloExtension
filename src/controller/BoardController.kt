@@ -8,7 +8,7 @@ import io.ktor.routing.Routing
 import io.ktor.routing.get
 import io.ktor.routing.route
 import nl.teqplay.trelloextension.RequestExecuter
-import nl.teqplay.trelloextension.helper.MissingHeaderException
+import nl.teqplay.trelloextension.helper.MissingParameterException
 import nl.teqplay.trelloextension.helper.RequestInfo
 import nl.teqplay.trelloextension.model.SprintDates
 import nl.teqplay.trelloextension.model.SprintLists
@@ -68,7 +68,7 @@ fun Routing.boardRouting() {
                 val endDate = queryParameters["endDate"]
 
                 if (startDate == null || endDate == null) {
-                    throw MissingHeaderException("You didn't provide a startDate or endDate value in the headers")
+                    throw MissingParameterException("You didn't provide a startDate or endDate value as query parameters")
                 } else {
                     val sprintDates = SprintDates(startDate, endDate)
                     call.respondText(
@@ -88,9 +88,9 @@ fun Routing.boardRouting() {
                 val startDate = queryParameters["startDate"]
                 val endDate = queryParameters["endDate"]
                 if (doneListId == null || doingListId == null || testingListId == null || reviewingListId == null) {
-                    throw MissingHeaderException("You didn't provide all the 4 different list ids in the headers")
+                    throw MissingParameterException("You didn't provide all the 4 different list ids as query parameters")
                 } else if (startDate == null || endDate == null) {
-                    throw MissingHeaderException("You didn't provide a startDate or endDate value in the headers")
+                    throw MissingParameterException("You didn't provide a startDate or endDate value as query parameters")
                 } else {
                     val sprintDates = SprintDates(startDate, endDate)
                     val leaderboardLists = SprintLists(
@@ -149,9 +149,9 @@ fun Routing.boardRouting() {
                 val today = queryParameters["today"]
 
                 if (doneListId == null || doingListId == null || testingListId == null || reviewingListId == null) {
-                    throw MissingHeaderException("You didn't provide all the 4 different list ids in the headers")
+                    throw MissingParameterException("You did not provide all the 4 different list ids as query parameters")
                 } else if (today == null) {
-                    throw MissingHeaderException("You didn't provide a today value in the headers")
+                    throw MissingParameterException("You did not provide a today value as query parameters")
                 } else {
 
                     val leaderboardLists = SprintLists(
@@ -164,7 +164,9 @@ fun Routing.boardRouting() {
                     call.respondText(
                         RequestExecuter.execute(
                             SyncTeamStatistics(
-                                request,
+                                request.id,
+                                request.GetKey(),
+                                request.GetToken(),
                                 today,
                                 leaderboardLists
                             )
@@ -176,16 +178,12 @@ fun Routing.boardRouting() {
 
             get("{id}/teamstatistics") {
                 val queryParameters = call.request.queryParameters
-                val startDate = queryParameters["startDate"]
-                val endDate = queryParameters["endDate"]
-
-                if (startDate == null || endDate == null) {
-                    throw MissingHeaderException("You didn't provide a startDate or endDate value in the headers")
+                val today = queryParameters["today"]
+                if (today == null) {
+                    throw MissingParameterException("You did not provide a today parameter")
                 } else {
-                    val sprintDates = SprintDates(startDate, endDate)
-
                     call.respondText(
-                        RequestExecuter.execute(GetTeamStatistics(call.parameters["id"]!!, sprintDates)),
+                        RequestExecuter.execute(GetTeamStatistics(call.parameters["id"]!!, today)),
                         contentType = ContentType.Application.Json
                     )
                 }

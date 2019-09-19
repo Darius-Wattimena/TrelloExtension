@@ -4,21 +4,26 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import nl.teqplay.trelloextension.datasource.ConfigDataSource
 import nl.teqplay.trelloextension.datasource.Database
+import nl.teqplay.trelloextension.model.SprintLists
 import nl.teqplay.trelloextension.service.sync.SyncBurndownChartInfo
 import nl.teqplay.trelloextension.service.sync.SyncMembers
+import nl.teqplay.trelloextension.service.sync.SyncTeamStatistics
 import org.slf4j.LoggerFactory
-import java.time.LocalDate
-import java.time.LocalTime
+import java.time.Duration
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
+import java.util.concurrent.ScheduledExecutorService
+import java.util.concurrent.TimeUnit
 
-class SyncTimerTask(private val timer: Timer, private val calendar: Calendar) : TimerTask() {
+
+class SyncTimerTask(private val scheduler: ScheduledExecutorService, private val zonedDateTime: ZonedDateTime) : TimerTask() {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     override fun run() {
         logger.info("Executing sync timer task")
+        scheduleNewTaskForTomorrow(scheduler, zonedDateTime)
         GlobalScope.launch {
             val config = ConfigDataSource.getSyncConfig(Database.instance)
             if (config != null) {
@@ -33,6 +38,8 @@ class SyncTimerTask(private val timer: Timer, private val calendar: Calendar) : 
                 val stringToday = DateTimeFormatter.ISO_LOCAL_DATE.format(convertedToday)
 
                 for (board in config.boards) {
+                    val sprintLists = SprintLists(board.doneListId, board.doingListId, board.testingListId, board.reviewingListId)
+
                     RequestExecuter.execute(
                         SyncMembers(
                             board.id,
@@ -41,16 +48,41 @@ class SyncTimerTask(private val timer: Timer, private val calendar: Calendar) : 
                         )
                     )
 
-                    RequestExecuter.execute(SyncBurndownChartInfo(board.id, config.key, config.token, board.doneListId, stringToday))
+                    RequestExecuter.execute(
+                        SyncBurndownChartInfo(
+                            board.id,
+                            config.key,
+                            config.token,
+                            board.doneListId,
+                            stringToday
+                        )
+                    )
+
+                    RequestExecuter.execute(
+                        SyncTeamStatistics(
+                            board.id,
+                            config.key,
+                            config.token,
+                            stringToday,
+                            sprintLists
+                        )
+                    )
                 }
             }
         }
-        scheduleNewTaskForTomorrow(timer, calendar)
     }
 
-    private fun scheduleNewTaskForTomorrow(timer: Timer, calendar: Calendar) {
+    private fun scheduleNewTaskForTomorrow(scheduler: ScheduledExecutorService, currentDateTime: ZonedDateTime) {
         logger.info("Scheduling new sync timer task")
-        calendar.add(Calendar.DATE, 1)
-        timer.schedule(SyncTimerTask(timer, calendar), calendar.time)
+        val nextZonedDateTime = currentDateTime.plusMinutes(1)
+        val duration = Duration.between(currentDateTime, nextZonedDateTime)
+        val initialDelay = duration.seconds
+
+        scheduler.scheduleAtFixedRate(
+            SyncTimerTask(scheduler, nextZonedDateTime),
+            initialDelay,
+            TimeUnit.DAYS.toSeconds(1),
+            TimeUnit.SECONDS
+        )
     }
 }
