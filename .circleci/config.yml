@@ -30,7 +30,9 @@ jobs:
           key: v1-dependencies-{{ checksum "build.gradle" }}
 
       # run tests and build war file!
-      - run: gradle test build runWar
+      - run: gradle test build
+      
+      - run: gradle runWar
 
       - run:
           name: Save test results
