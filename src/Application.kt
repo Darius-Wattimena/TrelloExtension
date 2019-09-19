@@ -1,16 +1,22 @@
 package nl.teqplay.trelloextension
 
+import de.nielsfalk.ktor.swagger.SwaggerSupport
+import de.nielsfalk.ktor.swagger.version.shared.Contact
+import de.nielsfalk.ktor.swagger.version.shared.Information
+import de.nielsfalk.ktor.swagger.version.v2.Swagger
+import de.nielsfalk.ktor.swagger.version.v3.OpenApi
 import io.ktor.application.Application
 import io.ktor.application.call
 import io.ktor.application.install
 import io.ktor.auth.*
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.apache.Apache
-import io.ktor.features.CORS
-import io.ktor.features.StatusPages
+import io.ktor.features.*
+import io.ktor.gson.gson
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
+import io.ktor.locations.Locations
 import io.ktor.response.respond
 import io.ktor.response.respondText
 import io.ktor.routing.get
@@ -29,9 +35,32 @@ import java.util.concurrent.Executors
 fun main(args: Array<String>) {
     embeddedServer(Netty, commandLineEnvironment(args)).start()
 }
+
+val sizeSchemaMap = mapOf(
+    "type" to "number",
+    "minimum" to 0
+)
+
+fun rectangleSchemaMap(refBase: String) = mapOf(
+    "type" to "object",
+    "properties" to mapOf(
+        "a" to mapOf("${'$'}ref" to "$refBase/size"),
+        "b" to mapOf("${'$'}ref" to "$refBase/size")
+    )
+)
+
 @Suppress("unused") // Referenced in application.conf
 @kotlin.jvm.JvmOverloads
 fun Application.module(@Suppress("UNUSED_PARAMETER") testing: Boolean = false) {
+    install(DefaultHeaders)
+    install(Compression)
+    install(CallLogging)
+    install(ContentNegotiation) {
+        gson {
+            setPrettyPrinting()
+        }
+    }
+
     install(StatusPages) {
         exception<MissingParameterException> { cause ->
             cause.message?.let { call.respond(HttpStatusCode.BadRequest, it) }
@@ -74,6 +103,26 @@ fun Application.module(@Suppress("UNUSED_PARAMETER") testing: Boolean = false) {
         header(HttpHeaders.AccessControlAllowOrigin)
         header(HttpHeaders.AccessControlRequestHeaders)
         header(HttpHeaders.AccessControlRequestMethod)
+    }
+
+    install(Locations)
+    install(SwaggerSupport) {
+        forwardRoot = true
+        val information = Information(
+            version = "0.1",
+            title = "TrackAndTrello Backend API",
+            description = "Test description"
+        )
+        swagger = Swagger().apply {
+            info = information
+            definitions["size"] = sizeSchemaMap
+            definitions["Rectangle"] = rectangleSchemaMap("#/definitions")
+        }
+        openApi = OpenApi().apply {
+            info = information
+            components.schemas["size"] = sizeSchemaMap
+            components.schemas["Rectangle"] = rectangleSchemaMap("#/components/schemas")
+        }
     }
 
     val client = HttpClient(Apache) {

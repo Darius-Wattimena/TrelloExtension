@@ -59,9 +59,12 @@ dependencies {
     compile "io.ktor:ktor-client-apache:$ktor_version"
     compile "io.ktor:ktor-client-gson:$ktor_version"
     compile "org.litote.kmongo:kmongo:$kmongo_version"
+    compile 'de.nielsfalk.ktor:ktor-swagger:0.5.0'
     testCompile "io.ktor:ktor-server-tests:$ktor_version"
     implementation "io.ktor:ktor-client-json:$ktor_version"
     implementation "io.ktor:ktor-auth:$ktor_version"
+    implementation "io.ktor:ktor-locations:$ktor_version"
+    implementation "io.ktor:ktor-gson:$ktor_version"
     implementation "com.google.code.gson:gson:$gson_version"
 }
 
