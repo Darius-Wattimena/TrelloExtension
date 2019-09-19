@@ -44,7 +44,7 @@ data class boardDetailed(val id: String)
 data class boardStatistics(val id: String)
 
 @Group("Board operations")
-@Location("/board/{id/lastAction}")
+@Location("/board/{id}/lastAction")
 data class boardLastAction(val id: String)
 
 @Group("Board operations")
