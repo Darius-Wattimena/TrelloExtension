@@ -1,9 +1,3 @@
-static def getDate() {
-    def date = new Date()
-    def formattedDate = date.format('yyyyMMddHHmmss')
-    return formattedDate
-}
-
 buildscript {
     repositories {
         jcenter()
@@ -87,7 +81,6 @@ beanstalk {
             file = "build/libs/trelloextension-${version}.war"
             application = "students"
             environment = "trelloextension"
-            name = "${version}-${getDate()}"
         }
     }
 }
