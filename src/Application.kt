@@ -1,7 +1,6 @@
 package nl.teqplay.trelloextension
 
 import de.nielsfalk.ktor.swagger.SwaggerSupport
-import de.nielsfalk.ktor.swagger.version.shared.Contact
 import de.nielsfalk.ktor.swagger.version.shared.Information
 import de.nielsfalk.ktor.swagger.version.v2.Swagger
 import de.nielsfalk.ktor.swagger.version.v3.OpenApi
@@ -18,8 +17,6 @@ import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.ktor.locations.Locations
 import io.ktor.response.respond
-import io.ktor.response.respondText
-import io.ktor.routing.get
 import io.ktor.routing.route
 import io.ktor.routing.routing
 import io.ktor.server.engine.commandLineEnvironment
@@ -29,23 +26,53 @@ import nl.teqplay.trelloextension.controller.*
 import nl.teqplay.trelloextension.helper.MissingParameterException
 import java.time.ZoneId
 import java.time.ZonedDateTime
-import java.util.*
 import java.util.concurrent.Executors
 
 fun main(args: Array<String>) {
     embeddedServer(Netty, commandLineEnvironment(args)).start()
 }
 
-val sizeSchemaMap = mapOf(
+val numberSchemaMap = mapOf(
     "type" to "number",
-    "minimum" to 0
+    "value" to 0
 )
 
-fun rectangleSchemaMap(refBase: String) = mapOf(
+val booleanSchemaMap = mapOf(
+    "type" to "boolean",
+    "value" to listOf(true, false)
+)
+
+val stringSchemaMap = mapOf(
+    "type" to "string",
+    "value" to "something"
+)
+
+val burndownchartItemSchemaMap = mapOf(
     "type" to "object",
     "properties" to mapOf(
-        "a" to mapOf("${'$'}ref" to "$refBase/size"),
-        "b" to mapOf("${'$'}ref" to "$refBase/size")
+        "date" to numberSchemaMap,
+        "totalDonePoint" to numberSchemaMap,
+        "totalDoneItems" to numberSchemaMap,
+        "totalDoneHoursSpend" to numberSchemaMap,
+        "totalPoint" to numberSchemaMap,
+        "totalItems" to numberSchemaMap,
+        "totalHoursSpend" to numberSchemaMap,
+        "missingInfoCards" to mapOf(
+            "type" to "object",
+            "properties" to mapOf(
+                "cardId" to stringSchemaMap,
+                "missing" to booleanSchemaMap
+            )
+        )
+    )
+)
+
+val burndownchartSchemaMap = mapOf(
+    "type" to "object",
+    "properties" to mapOf(
+        "items" to burndownchartItemSchemaMap,
+        "startDate" to stringSchemaMap,
+        "endDate" to stringSchemaMap
     )
 )
 
@@ -115,13 +142,11 @@ fun Application.module(@Suppress("UNUSED_PARAMETER") testing: Boolean = false) {
         )
         swagger = Swagger().apply {
             info = information
-            definitions["size"] = sizeSchemaMap
-            definitions["Rectangle"] = rectangleSchemaMap("#/definitions")
+            definitions["Burndownchart"] = burndownchartSchemaMap
         }
         openApi = OpenApi().apply {
             info = information
-            components.schemas["size"] = sizeSchemaMap
-            components.schemas["Rectangle"] = rectangleSchemaMap("#/components/schemas")
+            components.schemas["Burndownchart"] = burndownchartSchemaMap
         }
     }
 

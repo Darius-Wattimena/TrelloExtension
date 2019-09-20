@@ -7,7 +7,7 @@ import nl.teqplay.trelloextension.model.Member
 import nl.teqplay.trelloextension.service.BaseTrelloRequest
 
 class GetMember(private val requestInfo: RequestInfo) : BaseTrelloRequest<Member>() {
-    private val call = TrelloCall(requestInfo.GetKey(), requestInfo.GetToken())
+    private val call = TrelloCall(requestInfo.key, requestInfo.token)
 
     override fun prepare() {
         call.request = "members/${requestInfo.id}"

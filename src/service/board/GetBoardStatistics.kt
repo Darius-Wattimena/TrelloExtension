@@ -9,8 +9,8 @@ import nl.teqplay.trelloextension.model.Statistics
 import nl.teqplay.trelloextension.service.BaseTrelloRequest
 
 class GetBoardStatistics(private val requestInfo: RequestInfo) : BaseTrelloRequest<Statistics>() {
-    private val boardCall = TrelloCall(requestInfo.GetKey(), requestInfo.GetToken())
-    private val listsCall = TrelloCall(requestInfo.GetKey(), requestInfo.GetToken())
+    private val boardCall = TrelloCall(requestInfo.key, requestInfo.token)
+    private val listsCall = TrelloCall(requestInfo.key, requestInfo.token)
 
     override fun prepare() {
         boardCall.request = "board/${requestInfo.id}"

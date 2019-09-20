@@ -18,13 +18,13 @@ import nl.teqplay.trelloextension.service.action.GetAction
 
 @Group("Action operations")
 @Location("/action/{id}")
-data class action(val id: String)
+data class action(val id: String, val key: String, val token: String)
 
 fun Routing.actionRouting() {
     authenticate("basicAuth") {
-        get<action>("Find an action".responds(ok<Action>(), notFound())) { card->
+        get<action>("Find an action".responds(ok<Action>(), notFound())) { action->
             val queryParameters = call.request.queryParameters
-            val request = RequestInfo(queryParameters, card.id)
+            val request = RequestInfo(action.id, action.key, action.token)
             call.respondText(
                 RequestExecuter.execute(GetAction(request)),
                 contentType = ContentType.Application.Json

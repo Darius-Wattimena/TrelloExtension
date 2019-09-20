@@ -7,7 +7,7 @@ import nl.teqplay.trelloextension.model.Card
 import nl.teqplay.trelloextension.service.BaseTrelloRequest
 
 class GetCard(private val requestInfo: RequestInfo) : BaseTrelloRequest<Card>() {
-    private val call = TrelloCall(requestInfo.GetKey(), requestInfo.GetToken())
+    private val call = TrelloCall(requestInfo.key, requestInfo.token)
 
     override fun prepare() {
         call.request = "cards/${requestInfo.id}"

@@ -9,8 +9,8 @@ import nl.teqplay.trelloextension.model.List
 import nl.teqplay.trelloextension.service.BaseTrelloRequest
 
 class GetDetailedBoard(private val requestInfo: RequestInfo) : BaseTrelloRequest<Board>() {
-    private val boardCall = TrelloCall(requestInfo.GetKey(), requestInfo.GetToken())
-    private val boardListsCall = TrelloCall(requestInfo.GetKey(), requestInfo.GetToken())
+    private val boardCall = TrelloCall(requestInfo.key, requestInfo.token)
+    private val boardListsCall = TrelloCall(requestInfo.key, requestInfo.token)
 
     override fun prepare() {
         boardCall.request = "boards/${requestInfo.id}"
@@ -28,7 +28,7 @@ class GetDetailedBoard(private val requestInfo: RequestInfo) : BaseTrelloRequest
         val boardLists = JsonHelper.fromJson(gson, boardListsCall, client, Array<List>::class.java)
 
         for (list in boardLists) {
-            val listCardsCall = TrelloCall(requestInfo.GetKey(), requestInfo.GetToken())
+            val listCardsCall = TrelloCall(requestInfo.key, requestInfo.token)
             listCardsCall.request = "lists/${list.id}/cards"
             val listCards = JsonHelper.fromJson(gson, listCardsCall, client, Array<Card>::class.java)
             list.cards = listCards

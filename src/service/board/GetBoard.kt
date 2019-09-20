@@ -7,7 +7,7 @@ import nl.teqplay.trelloextension.model.Board
 import nl.teqplay.trelloextension.service.BaseTrelloRequest
 
 class GetBoard(private val requestInfo: RequestInfo) : BaseTrelloRequest<Board>() {
-    private val call = TrelloCall(requestInfo.GetKey(), requestInfo.GetToken())
+    private val call = TrelloCall(requestInfo.key, requestInfo.token)
 
     override fun prepare() {
         call.request = "boards/${requestInfo.id}"

@@ -17,7 +17,7 @@ class SyncBoardLeaderboardData(
     private val sprintDates: SprintDates
 ) : BaseTrelloRequest<String>() {
     private val db = Database.instance
-    private val boardCall = TrelloCall(requestInfo.GetKey(), requestInfo.GetToken())
+    private val boardCall = TrelloCall(requestInfo.key, requestInfo.token)
 
     override fun prepare() {
         boardCall.request = "/boards/${requestInfo.id}/lists"
@@ -73,7 +73,7 @@ class SyncBoardLeaderboardData(
     }
 
     private suspend fun getAllCardsOfAList(listId: String, requestInfo: RequestInfo): Array<Card> {
-        val listCall = TrelloCall(requestInfo.GetKey(), requestInfo.GetToken())
+        val listCall = TrelloCall(requestInfo.key, requestInfo.token)
         listCall.request = "/lists/$listId/cards"
         listCall.parameters["fields"] = "id,name"
         listCall.parameters["members"] = "true"

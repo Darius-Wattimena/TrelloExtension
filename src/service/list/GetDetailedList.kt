@@ -8,8 +8,8 @@ import nl.teqplay.trelloextension.model.List
 import nl.teqplay.trelloextension.service.BaseTrelloRequest
 
 class GetDetailedList(private val requestInfo: RequestInfo) : BaseTrelloRequest<List>() {
-    private val call = TrelloCall(requestInfo.GetKey(), requestInfo.GetToken())
-    private val cardsCall = TrelloCall(requestInfo.GetKey(), requestInfo.GetToken())
+    private val call = TrelloCall(requestInfo.key, requestInfo.token)
+    private val cardsCall = TrelloCall(requestInfo.key, requestInfo.token)
 
     override fun prepare() {
         call.request = "lists/${requestInfo.id}"

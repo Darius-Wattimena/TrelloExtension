@@ -15,13 +15,13 @@ import nl.teqplay.trelloextension.service.member.GetMember
 
 @Group("Member operations")
 @Location("member/{id}")
-data class member(val id: String)
+data class member(val id: String, val key: String, val token: String)
 
 fun Routing.memberRouting() {
     authenticate("basicAuth") {
-        get<member>("Find a member".responds(ok<Member>(), notFound())) { memberInstance->
+        get<member>("Find a member".responds(ok<Member>(), notFound())) { member->
             val queryParameters = call.request.queryParameters
-            val request = RequestInfo(queryParameters, memberInstance.id)
+            val request = RequestInfo(member.id, member.key, member.token)
             call.respondText(
                 RequestExecuter.execute(GetMember(request)),
                 contentType = ContentType.Application.Json

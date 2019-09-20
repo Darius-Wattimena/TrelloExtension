@@ -7,7 +7,7 @@ import nl.teqplay.trelloextension.model.Action
 import nl.teqplay.trelloextension.service.BaseTrelloRequest
 
 class GetAction(private val requestInfo: RequestInfo) : BaseTrelloRequest<Action>() {
-    private val call = TrelloCall(requestInfo.GetKey(), requestInfo.GetToken())
+    private val call = TrelloCall(requestInfo.key, requestInfo.token)
 
     override fun prepare() {
         call.request = "actions/${requestInfo.id}"
