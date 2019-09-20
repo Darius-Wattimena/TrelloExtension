@@ -11,7 +11,12 @@ object LeaderboardDataSource {
         return collection.find(LeaderboardItem::boardId eq boardId).toList()
     }
 
-    fun findAllBoardItems(boardId: String, startDate: Long, endDate: Long, database: Database.Companion.DatabaseImpl): List<LeaderboardItem> {
+    fun findAllBoardItems(
+        boardId: String,
+        startDate: Long,
+        endDate: Long,
+        database: Database.Companion.DatabaseImpl
+    ): List<LeaderboardItem> {
         val collection = database.leaderboardItemCollection
         return collection.find(
             and(
@@ -22,13 +27,19 @@ object LeaderboardDataSource {
         ).toList()
     }
 
-    fun updateWhenBoardAndMemberIdIsFoundOtherwiseInsert(item: LeaderboardItem, boardId: String, memberId: String, database: Database.Companion.DatabaseImpl) {
+    fun updateWhenBoardAndMemberIdIsFoundOtherwiseInsert(
+        item: LeaderboardItem,
+        boardId: String,
+        memberId: String,
+        database: Database.Companion.DatabaseImpl
+    ) {
         val collection = database.leaderboardItemCollection
         val result = collection.updateOne(
             and(
                 LeaderboardItem::boardId eq boardId,
                 LeaderboardItem::memberId eq memberId
-            ), item)
+            ), item
+        )
         if (result.matchedCount != 1L) {
             collection.insertOne(item)
         }

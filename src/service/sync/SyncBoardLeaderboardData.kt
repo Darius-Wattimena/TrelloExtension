@@ -27,7 +27,12 @@ class SyncBoardLeaderboardData(
 
     override suspend fun execute(): String {
         val lists = JsonHelper.fromJson(gson, boardCall, client, Array<List>::class.java)
-        val databaseLeaderboardItems = LeaderboardDataSource.findAllBoardItems(requestInfo.id, sprintDates.epochStartDate, sprintDates.epochEndDate, db)
+        val databaseLeaderboardItems = LeaderboardDataSource.findAllBoardItems(
+            requestInfo.id,
+            sprintDates.epochStartDate,
+            sprintDates.epochEndDate,
+            db
+        )
 
         val databaseMembers = MemberDataSource.findAll(db)
         val resultItems = HashMap<String, LeaderboardItem>()
@@ -59,8 +64,12 @@ class SyncBoardLeaderboardData(
         }
     }
 
-    private fun insertMissingMembersInResultMap(members: Collection<Member>, boardId: String, resultItems: HashMap<String, LeaderboardItem>) {
-        members.forEach {member ->
+    private fun insertMissingMembersInResultMap(
+        members: Collection<Member>,
+        boardId: String,
+        resultItems: HashMap<String, LeaderboardItem>
+    ) {
+        members.forEach { member ->
             if (!resultItems.containsKey(member.id)) {
                 resultItems[member.id] = LeaderboardItem(
                     boardId,
@@ -82,7 +91,12 @@ class SyncBoardLeaderboardData(
         return JsonHelper.fromJson(gson, listCall, client, Array<Card>::class.java)
     }
 
-    private fun processLeaderboardDataFromCards(cards: Array<Card>, listId: String, sprintLists: SprintLists, resultItems: HashMap<String, LeaderboardItem>) {
+    private fun processLeaderboardDataFromCards(
+        cards: Array<Card>,
+        listId: String,
+        sprintLists: SprintLists,
+        resultItems: HashMap<String, LeaderboardItem>
+    ) {
         for (card in cards) {
             for (cardMember in card.members) {
                 val leaderBoardItem = resultItems[cardMember.id]

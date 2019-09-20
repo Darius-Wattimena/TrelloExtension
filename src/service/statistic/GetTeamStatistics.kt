@@ -22,7 +22,7 @@ class GetTeamStatistics(private val boardId: String, val today: String) : BaseTr
             it.set(Calendar.SECOND, 0)
             it.set(Calendar.MILLISECOND, 0)
         }
-        var dayOfWeek : Int
+        var dayOfWeek: Int
         do {
             cal.add(Calendar.DAY_OF_MONTH, -1)
             dayOfWeek = cal.get(Calendar.DAY_OF_WEEK)
@@ -36,6 +36,11 @@ class GetTeamStatistics(private val boardId: String, val today: String) : BaseTr
         val lastWorkingDayEpochMilliseconds = getLastWorkingDay()
         val todayEpochMilliseconds = TimeHelper.epochSecondsToMilliseconds(todayZonedDateTime.toEpochSecond())
 
-        return StatisticsDataSource.findAllTeamStatistics(boardId, todayEpochMilliseconds, lastWorkingDayEpochMilliseconds, db)
+        return StatisticsDataSource.findAllTeamStatistics(
+            boardId,
+            todayEpochMilliseconds,
+            lastWorkingDayEpochMilliseconds,
+            db
+        )
     }
 }

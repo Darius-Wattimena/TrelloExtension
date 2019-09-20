@@ -9,11 +9,8 @@ import io.ktor.application.call
 import io.ktor.auth.authenticate
 import io.ktor.http.ContentType
 import io.ktor.locations.Location
-import io.ktor.locations.get
 import io.ktor.response.respondText
 import io.ktor.routing.Routing
-import io.ktor.routing.get
-import io.ktor.routing.route
 import nl.teqplay.trelloextension.RequestExecuter
 import nl.teqplay.trelloextension.helper.RequestInfo
 import nl.teqplay.trelloextension.model.*
@@ -62,7 +59,7 @@ data class boardTeamStatistics(val id: String, val today: String)
 
 fun Routing.boardRouting() {
     authenticate("basicAuth") {
-        get<board>("Find a board".responds(ok<Board>(), badRequest())) { board->
+        get<board>("Find a board".responds(ok<Board>(), badRequest())) { board ->
             val request = RequestInfo(board.id, board.key, board.token)
             call.respondText(
                 RequestExecuter.execute(GetBoard(request)),
@@ -70,7 +67,7 @@ fun Routing.boardRouting() {
             )
         }
 
-        get<boardDetailed>("Find a board detailed".responds(ok<Board>(), badRequest())) { board->
+        get<boardDetailed>("Find a board detailed".responds(ok<Board>(), badRequest())) { board ->
             val request = RequestInfo(board.id, board.key, board.token)
             call.respondText(
                 RequestExecuter.execute(GetDetailedBoard(request)),
@@ -78,7 +75,7 @@ fun Routing.boardRouting() {
             )
         }
 
-        get<boardStatistics>("Find statistics of a board".responds(ok<Statistics>(), badRequest())) { board->
+        get<boardStatistics>("Find statistics of a board".responds(ok<Statistics>(), badRequest())) { board ->
             val request = RequestInfo(board.id, board.key, board.token)
             call.respondText(
                 RequestExecuter.execute(GetBoardStatistics(request)),
@@ -86,7 +83,7 @@ fun Routing.boardRouting() {
             )
         }
 
-        get<boardLastAction>("Find the last action on a board".responds(ok<Action>(), badRequest())) { board->
+        get<boardLastAction>("Find the last action on a board".responds(ok<Action>(), badRequest())) { board ->
             val request = RequestInfo(board.id, board.key, board.token)
             call.respondText(
                 RequestExecuter.execute(GetLastBoardAction(request)),
@@ -94,14 +91,24 @@ fun Routing.boardRouting() {
             )
         }
 
-        get<boardTeamStatistics>("Find team statistics of a board".responds(ok<Model<TeamStatistics>>(), badRequest())) { board->
+        get<boardTeamStatistics>(
+            "Find team statistics of a board".responds(
+                ok<Model<TeamStatistics>>(),
+                badRequest()
+            )
+        ) { board ->
             call.respondText(
                 RequestExecuter.execute(GetTeamStatistics(board.id, board.today)),
                 contentType = ContentType.Application.Json
             )
         }
 
-        get<boardBurndownchart>("Get all the info for a burndownchart".responds(ok("Burndownchart"), badRequest())) { board ->
+        get<boardBurndownchart>(
+            "Get all the info for a burndownchart".responds(
+                ok("Burndownchart"),
+                badRequest()
+            )
+        ) { board ->
             val sprintDates = SprintDates(board.startDate, board.endDate)
             call.respondText(
                 RequestExecuter.execute(GetBurndownChartInfo(sprintDates)),
@@ -109,7 +116,12 @@ fun Routing.boardRouting() {
             )
         }
 
-        get<boardLeaderboard>("Get a list of all an item for all members with there leaderboard points".responds(ok<Leaderboard>(), badRequest())) { board ->
+        get<boardLeaderboard>(
+            "Get a list of all an item for all members with there leaderboard points".responds(
+                ok<Leaderboard>(),
+                badRequest()
+            )
+        ) { board ->
             call.respondText(
                 RequestExecuter.execute(
                     GetLeaderboardData(

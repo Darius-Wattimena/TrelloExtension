@@ -1,9 +1,10 @@
 package nl.teqplay.trelloextension.datasource
 
-import nl.teqplay.trelloextension.model.SprintDates
 import nl.teqplay.trelloextension.model.TeamStatistics
-import org.litote.kmongo.*
-import kotlin.collections.toList
+import org.litote.kmongo.and
+import org.litote.kmongo.eq
+import org.litote.kmongo.or
+import org.litote.kmongo.updateOne
 
 object StatisticsDataSource {
 
@@ -21,7 +22,8 @@ object StatisticsDataSource {
                     TeamStatistics::date eq today,
                     TeamStatistics::date eq lastWorkDay
                 )
-            )).toList()
+            )
+        ).toList()
     }
 
     fun saveTeamStatistics(item: TeamStatistics, database: Database.Companion.DatabaseImpl) {
@@ -30,7 +32,8 @@ object StatisticsDataSource {
             and(
                 TeamStatistics::boardId eq item.boardId,
                 TeamStatistics::date eq item.date
-            ), item)
+            ), item
+        )
         if (result.matchedCount != 1L) {
             collection.insertOne(item)
         }

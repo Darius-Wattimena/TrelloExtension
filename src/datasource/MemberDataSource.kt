@@ -1,6 +1,5 @@
 package nl.teqplay.trelloextension.datasource
 
-import com.mongodb.client.FindIterable
 import nl.teqplay.trelloextension.model.Member
 import org.litote.kmongo.eq
 import org.litote.kmongo.updateOne

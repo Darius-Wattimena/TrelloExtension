@@ -10,10 +10,12 @@ object ConfigDataSource {
     fun saveSyncConfig(config: SyncConfig, database: Database.Companion.DatabaseImpl) {
         val collection = database.syncConfigCollection
         //TODO redo logic when to update
-        val updateResult = collection.updateOne(and(
-            SyncConfig::key eq config.key,
-            SyncConfig::token eq config.token
-        ), config)
+        val updateResult = collection.updateOne(
+            and(
+                SyncConfig::key eq config.key,
+                SyncConfig::token eq config.token
+            ), config
+        )
 
         if (updateResult.matchedCount == 0L) {
             collection.insertOne(config)

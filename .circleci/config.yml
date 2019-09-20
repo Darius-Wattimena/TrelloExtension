@@ -33,7 +33,7 @@ jobs:
       - run:
           name: Gradle testing and building
           command: gradle test build
-      
+
       - run:
           name: Generating war file using gradle
           command: gradle war

@@ -3,7 +3,6 @@ package nl.teqplay.trelloextension.service.burndownchart
 import com.google.gson.Gson
 import io.ktor.client.HttpClient
 import nl.teqplay.trelloextension.helper.JsonHelper
-import nl.teqplay.trelloextension.helper.RequestInfo
 import nl.teqplay.trelloextension.helper.TrelloCall
 import nl.teqplay.trelloextension.model.BurndownChartDetails
 import nl.teqplay.trelloextension.model.BurndownChartItem

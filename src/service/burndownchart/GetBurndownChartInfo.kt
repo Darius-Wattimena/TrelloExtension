@@ -16,7 +16,8 @@ class GetBurndownChartInfo(private val sprintDates: SprintDates) : BaseTrelloReq
     override suspend fun execute(): BurndownChart {
         val burndownChart = BurndownChart(HashMap(), sprintDates.epochStartDate, sprintDates.epochEndDate)
 
-        val databaseItems = BurndownChartDataSource.findAllBetweenEpochDates(sprintDates.epochStartDate, sprintDates.epochEndDate, db)
+        val databaseItems =
+            BurndownChartDataSource.findAllBetweenEpochDates(sprintDates.epochStartDate, sprintDates.epochEndDate, db)
 
         databaseItems.forEach {
             burndownChart.items[it.date] = it

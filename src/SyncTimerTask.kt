@@ -18,7 +18,10 @@ import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit
 
 
-class SyncTimerTask(private val scheduler: ScheduledExecutorService, private val zonedDateTime: ZonedDateTime) : TimerTask() {
+class SyncTimerTask(
+    private val scheduler: ScheduledExecutorService,
+    private val zonedDateTime: ZonedDateTime
+) : TimerTask() {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     override fun run() {
@@ -38,7 +41,8 @@ class SyncTimerTask(private val scheduler: ScheduledExecutorService, private val
                 val stringToday = DateTimeFormatter.ISO_LOCAL_DATE.format(convertedToday)
 
                 for (board in config.boards) {
-                    val sprintLists = SprintLists(board.doneListId, board.doingListId, board.testingListId, board.reviewingListId)
+                    val sprintLists =
+                        SprintLists(board.doneListId, board.doingListId, board.testingListId, board.reviewingListId)
 
                     RequestExecuter.execute(
                         SyncMembers(

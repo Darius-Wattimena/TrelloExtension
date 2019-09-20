@@ -22,7 +22,7 @@ data class action(val id: String, val key: String, val token: String)
 
 fun Routing.actionRouting() {
     authenticate("basicAuth") {
-        get<action>("Find an action".responds(ok<Action>(), notFound())) { action->
+        get<action>("Find an action".responds(ok<Action>(), notFound())) { action ->
             val queryParameters = call.request.queryParameters
             val request = RequestInfo(action.id, action.key, action.token)
             call.respondText(

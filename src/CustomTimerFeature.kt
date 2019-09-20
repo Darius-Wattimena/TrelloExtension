@@ -3,11 +3,9 @@ package nl.teqplay.trelloextension
 import io.ktor.application.ApplicationCallPipeline
 import io.ktor.application.ApplicationFeature
 import io.ktor.util.AttributeKey
-import nl.teqplay.trelloextension.helper.TimeHelper
 import org.slf4j.LoggerFactory
 import java.time.Duration
 import java.time.ZonedDateTime
-import java.util.*
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit
 
@@ -17,15 +15,18 @@ class CustomTimerFeature(configuration: Configuration) {
     val zonedDateTime = configuration.zonedDateTime
 
     class Configuration {
-        var scheduler : ScheduledExecutorService? = null
-        var zonedDateTime : ZonedDateTime? = null
+        var scheduler: ScheduledExecutorService? = null
+        var zonedDateTime: ZonedDateTime? = null
     }
 
     companion object Feature : ApplicationFeature<ApplicationCallPipeline, Configuration, CustomTimerFeature> {
         override val key = AttributeKey<CustomTimerFeature>("TimerFeature")
         var timerPrepared = false
 
-        override fun install(pipeline: ApplicationCallPipeline, configure: Configuration.() -> Unit): CustomTimerFeature {
+        override fun install(
+            pipeline: ApplicationCallPipeline,
+            configure: Configuration.() -> Unit
+        ): CustomTimerFeature {
             val configuration = Configuration().apply(configure)
 
             val feature = CustomTimerFeature(configuration)
@@ -45,7 +46,7 @@ class CustomTimerFeature(configuration: Configuration) {
             .withHour(2)
             .withMinute(0)
             .withSecond(0)
-        if(currentDateTime > nextZonedDateTime)
+        if (currentDateTime > nextZonedDateTime)
             nextZonedDateTime = nextZonedDateTime.plusDays(1)
 
         val duration = Duration.between(currentDateTime, nextZonedDateTime)

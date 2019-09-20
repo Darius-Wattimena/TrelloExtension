@@ -1,6 +1,5 @@
 package nl.teqplay.trelloextension
 
-import com.typesafe.config.ConfigFactory
 import de.nielsfalk.ktor.swagger.SwaggerSupport
 import de.nielsfalk.ktor.swagger.version.shared.Information
 import de.nielsfalk.ktor.swagger.version.v2.Swagger
@@ -8,10 +7,11 @@ import de.nielsfalk.ktor.swagger.version.v3.OpenApi
 import io.ktor.application.Application
 import io.ktor.application.call
 import io.ktor.application.install
-import io.ktor.auth.*
+import io.ktor.auth.Authentication
+import io.ktor.auth.UserIdPrincipal
+import io.ktor.auth.basic
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.apache.Apache
-import io.ktor.config.HoconApplicationConfig
 import io.ktor.features.*
 import io.ktor.gson.gson
 import io.ktor.http.HttpHeaders
@@ -21,24 +21,13 @@ import io.ktor.locations.Locations
 import io.ktor.response.respond
 import io.ktor.routing.route
 import io.ktor.routing.routing
-import io.ktor.server.engine.applicationEngineEnvironment
-import io.ktor.server.engine.commandLineEnvironment
-import io.ktor.server.engine.embeddedServer
-import io.ktor.server.netty.Netty
 import nl.teqplay.trelloextension.controller.*
 import nl.teqplay.trelloextension.helper.MissingParameterException
-import org.slf4j.LoggerFactory
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.util.concurrent.Executors
 
-fun main(args: Array<String>) {
-    /*embeddedServer(Netty, commandLineEnvironment(args)) {
-        log = LoggerFactory.getLogger("teqplay.trelloextension")
-        config = HoconApplicationConfig(ConfigFactory.load())
-    }).start(true)*/
-    io.ktor.server.netty.EngineMain.main(args)
-}
+fun main(args: Array<String>) = io.ktor.server.netty.EngineMain.main(args)
 
 val numberSchemaMap = mapOf(
     "type" to "number",

@@ -4,19 +4,20 @@ import nl.teqplay.trelloextension.Constants
 import nl.teqplay.trelloextension.datasource.Database
 import nl.teqplay.trelloextension.datasource.StatisticsDataSource
 import nl.teqplay.trelloextension.helper.JsonHelper
-import nl.teqplay.trelloextension.helper.RequestInfo
 import nl.teqplay.trelloextension.helper.TimeHelper
 import nl.teqplay.trelloextension.helper.TrelloCall
 import nl.teqplay.trelloextension.model.List
 import nl.teqplay.trelloextension.model.SprintLists
 import nl.teqplay.trelloextension.model.TeamStatistics
 import nl.teqplay.trelloextension.service.BaseTrelloRequest
-import java.sql.Date
-import java.time.LocalDate
-import java.time.ZoneId
-import java.util.*
 
-class SyncTeamStatistics(private val boardId: String, key: String, token: String, private val today: String, private val sprintLists: SprintLists) : BaseTrelloRequest<String>() {
+class SyncTeamStatistics(
+    private val boardId: String,
+    key: String,
+    token: String,
+    private val today: String,
+    private val sprintLists: SprintLists
+) : BaseTrelloRequest<String>() {
     private val db = Database.instance
     private val boardCall = TrelloCall(key, token)
 

@@ -1,11 +1,10 @@
 package nl.teqplay.trelloextension.service.leaderboard
 
-import nl.teqplay.trelloextension.model.Leaderboard
-import nl.teqplay.trelloextension.model.LeaderboardItem
 import nl.teqplay.trelloextension.datasource.Database
 import nl.teqplay.trelloextension.datasource.LeaderboardDataSource
+import nl.teqplay.trelloextension.model.Leaderboard
+import nl.teqplay.trelloextension.model.LeaderboardItem
 import nl.teqplay.trelloextension.service.BaseTrelloRequest
-import org.litote.kmongo.eq
 import java.sql.Date
 import java.time.LocalDate
 

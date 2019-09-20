@@ -1,6 +1,9 @@
 package nl.teqplay.trelloextension.controller
 
-import de.nielsfalk.ktor.swagger.*
+import de.nielsfalk.ktor.swagger.get
+import de.nielsfalk.ktor.swagger.notFound
+import de.nielsfalk.ktor.swagger.ok
+import de.nielsfalk.ktor.swagger.responds
 import de.nielsfalk.ktor.swagger.version.shared.Group
 import io.ktor.application.call
 import io.ktor.auth.authenticate
@@ -24,7 +27,7 @@ data class detailed(val id: String, val key: String, val token: String)
 
 fun Routing.listRouting() {
     authenticate("basicAuth") {
-        get<list>("Find a list".responds(ok<List>(), notFound())) { list->
+        get<list>("Find a list".responds(ok<List>(), notFound())) { list ->
             val queryParameters = call.request.queryParameters
             val request = RequestInfo(list.id, list.key, list.token)
             call.respondText(

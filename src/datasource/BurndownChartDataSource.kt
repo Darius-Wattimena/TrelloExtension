@@ -5,7 +5,11 @@ import org.litote.kmongo.*
 import kotlin.collections.toList
 
 object BurndownChartDataSource {
-    fun findAllBetweenEpochDates(startDate: Long, endDate: Long, database: Database.Companion.DatabaseImpl): List<BurndownChartItem> {
+    fun findAllBetweenEpochDates(
+        startDate: Long,
+        endDate: Long,
+        database: Database.Companion.DatabaseImpl
+    ): List<BurndownChartItem> {
         val collection = database.burndownChartItemCollection
         return collection.find(
             and(
@@ -15,12 +19,15 @@ object BurndownChartDataSource {
         ).toList()
     }
 
-    fun findWithEpochDate(date: Long, database: Database.Companion.DatabaseImpl) : BurndownChartItem? {
+    fun findWithEpochDate(date: Long, database: Database.Companion.DatabaseImpl): BurndownChartItem? {
         val collection = database.burndownChartItemCollection
         return collection.findOne(BurndownChartItem::date eq date)
     }
 
-    fun updateWhenBurndownChartItemDateIsFoundOtherwiseInsert(item: BurndownChartItem, database: Database.Companion.DatabaseImpl) {
+    fun updateWhenBurndownChartItemDateIsFoundOtherwiseInsert(
+        item: BurndownChartItem,
+        database: Database.Companion.DatabaseImpl
+    ) {
         val collection = database.burndownChartItemCollection
         val updateResult = collection.updateOne(BurndownChartItem::date eq item.date, item)
         if (updateResult.matchedCount == 0L) {
