@@ -3,6 +3,7 @@ package nl.teqplay.trelloextension.datasource
 import com.mongodb.MongoCredential
 import com.mongodb.ServerAddress
 import com.typesafe.config.ConfigFactory
+import io.ktor.config.HoconApplicationConfig
 import nl.teqplay.trelloextension.model.BurndownChartItem
 import nl.teqplay.trelloextension.model.LeaderboardItem
 import nl.teqplay.trelloextension.model.Member
@@ -16,23 +17,23 @@ class Database {
         val instance = DatabaseImpl()
 
         class DatabaseImpl internal constructor() {
-            private val config = ConfigFactory.load()
-            private val dbConfig = config.getConfig("ktor").getConfig("application").getConfig("db")
-            private val dbName = dbConfig.getString("db_name")
-            private val host = dbConfig.getString("db_host")
-            private val port = dbConfig.getInt("db_port")
-            private val username = dbConfig.getString("username")
-            private val password = dbConfig.getString("password")
+            val config = HoconApplicationConfig(ConfigFactory.load())
+            val databaseConfig = config.config("ktor.application.db")
+            private val name = databaseConfig.property("name").getString()
+            private val host = databaseConfig.property("host").getString()
+            private val port = databaseConfig.property("port").getString().toInt()
+            private val username = databaseConfig.property("username").getString()
+            private val password = databaseConfig.property("password").getString()
 
             private val credentials = MongoCredential.createCredential(
-                username, dbName, password.toCharArray()
+                username, name, password.toCharArray()
             )
 
             private val client = KMongo.createClient(
                 ServerAddress(host, port),
                 listOf(credentials)
             )
-            private val database = client.getDatabase(dbName)
+            private val database = client.getDatabase(name)
 
             val burndownChartItemCollection = database.getCollection<BurndownChartItem>()
             val memberCollection = database.getCollection<Member>()
