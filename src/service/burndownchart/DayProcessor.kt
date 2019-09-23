@@ -11,8 +11,6 @@ import nl.teqplay.trelloextension.model.List
 
 class DayProcessor() {
 
-    private val bcDetails = BurndownChartDetails()
-
     suspend fun process(
         key: String,
         token: String,
@@ -22,6 +20,7 @@ class DayProcessor() {
         doneListId: String
     ): BurndownChartDetails {
         val lists = JsonHelper.fromJson(gson, boardCall, client, Array<List>::class.java)
+        val bcDetails = BurndownChartDetails()
 
         for (list in lists) {
             val listCall = TrelloCall(key, token)
@@ -30,8 +29,8 @@ class DayProcessor() {
 
             val cards = JsonHelper.fromJson(gson, listCall, client, Array<Card>::class.java)
 
-            val hours = getAmount(list, cards, """\[[+-]?(\d*\.)?\d+\]""", "[", "]", doneListId)
-            val points = getAmount(list, cards, """\([+-]?(\d*\.)?\d+\)""", "(", ")", doneListId)
+            val hours = getAmount(list, cards, """\[[+-]?(\d*\.)?\d+\]""", "[", "]", doneListId, bcDetails)
+            val points = getAmount(list, cards, """\([+-]?(\d*\.)?\d+\)""", "(", ")", doneListId, bcDetails)
 
             if (list.id == doneListId) {
                 bcDetails.donePoints += points.toInt()
@@ -47,8 +46,9 @@ class DayProcessor() {
         return bcDetails
     }
 
-    fun convertToBurndownChartItem(bcDetails: BurndownChartDetails, epochDate: Long): BurndownChartItem {
+    fun convertToBurndownChartItem(boardId: String, bcDetails: BurndownChartDetails, epochDate: Long): BurndownChartItem {
         return BurndownChartItem(
+            boardId,
             epochDate,
             bcDetails.donePoints,
             bcDetails.doneItems,
@@ -66,7 +66,8 @@ class DayProcessor() {
         regexPattern: String,
         prefix: String,
         suffix: String,
-        doneListId: String
+        doneListId: String,
+        bcDetails: BurndownChartDetails
     ): Float {
         var resultTotal = 0f
         for (card in cards) {
@@ -78,24 +79,24 @@ class DayProcessor() {
                 resultTotal += resultValue
                 // TODO fix logic
                 if (resultValue == 0f && list.id == doneListId) {
-                    processZeroHoursOnDoneItem(card, resultString)
+                    processZeroHoursOnDoneItem(card, resultString, bcDetails)
                 }
 
             } else {
-                processMissingInfo(card)
+                processMissingInfo(card, bcDetails)
             }
         }
 
         return resultTotal
     }
 
-    private fun processMissingInfo(card: Card) {
+    private fun processMissingInfo(card: Card, bcDetails: BurndownChartDetails) {
         bcDetails.missingInfo[card.id] = true
     }
 
-    private fun processZeroHoursOnDoneItem(card: Card, result: String) {
+    private fun processZeroHoursOnDoneItem(card: Card, result: String, bcDetails: BurndownChartDetails) {
         if (result.toFloat() == 0f) {
-            processMissingInfo(card)
+            processMissingInfo(card, bcDetails)
         }
     }
 }

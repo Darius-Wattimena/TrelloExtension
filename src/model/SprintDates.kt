@@ -1,11 +1,10 @@
 package nl.teqplay.trelloextension.model
 
+import nl.teqplay.trelloextension.helper.TimeHelper
 import java.sql.Date
 import java.time.LocalDate
 
 class SprintDates(startDate: String, endDate: String) {
-    var startLocalDate: LocalDate = LocalDate.parse(startDate)
-    var endLocalDate: LocalDate = LocalDate.parse(endDate)
-    var epochStartDate: Long = Date.valueOf(startDate).time
-    var epochEndDate: Long = Date.valueOf(endDate).time
+    var epochStartDate = TimeHelper.getISOLocalDateStringToEpochMilliseconds(startDate)
+    var epochEndDate: Long = TimeHelper.getISOLocalDateStringToEpochMilliseconds(endDate)
 }

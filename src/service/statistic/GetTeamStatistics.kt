@@ -15,8 +15,9 @@ class GetTeamStatistics(private val boardId: String, val today: String) : BaseTr
 
     }
 
-    private fun getLastWorkingDay(): Long {
+    private fun getLastWorkingDay(currentEpoch: Long): Long {
         val cal = Calendar.getInstance(TimeZone.getTimeZone(ZoneId.of("UTC"))).also {
+            it.timeInMillis = currentEpoch
             it.set(Calendar.HOUR, 0)
             it.set(Calendar.MINUTE, 0)
             it.set(Calendar.SECOND, 0)
@@ -26,15 +27,15 @@ class GetTeamStatistics(private val boardId: String, val today: String) : BaseTr
         do {
             cal.add(Calendar.DAY_OF_MONTH, -1)
             dayOfWeek = cal.get(Calendar.DAY_OF_WEEK)
-        } while (dayOfWeek == Calendar.SATURDAY && dayOfWeek == Calendar.SUNDAY)
+        } while (dayOfWeek == Calendar.SATURDAY || dayOfWeek == Calendar.SUNDAY)
         return cal.time.time
     }
 
     override suspend fun execute(): List<TeamStatistics> {
         val todayZonedDateTime = TimeHelper.getZonedDateTimeFromISOLocalDateString(today)
-
-        val lastWorkingDayEpochMilliseconds = getLastWorkingDay()
         val todayEpochMilliseconds = TimeHelper.epochSecondsToMilliseconds(todayZonedDateTime.toEpochSecond())
+
+        val lastWorkingDayEpochMilliseconds = getLastWorkingDay(todayEpochMilliseconds)
 
         return StatisticsDataSource.findAllTeamStatistics(
             boardId,

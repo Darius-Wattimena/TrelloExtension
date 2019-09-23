@@ -1,6 +1,7 @@
 package nl.teqplay.trelloextension.model
 
 data class BurndownChartItem(
+    val boardId: String,
     val date: Long,
     val totalDonePoint: Int,
     val totalDoneItems: Int,

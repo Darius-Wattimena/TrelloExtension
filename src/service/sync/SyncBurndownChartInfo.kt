@@ -31,7 +31,7 @@ class SyncBurndownChartInfo(
 
         DayProcessor().run {
             val details = process(key, token, gson, boardCall, client, doneListId)
-            convertToBurndownChartItem(details, todayDate)
+            convertToBurndownChartItem(boardId, details, todayDate)
         }.also {
             BurndownChartDataSource.updateWhenBurndownChartItemDateIsFoundOtherwiseInsert(it, db)
         }

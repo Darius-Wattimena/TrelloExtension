@@ -111,7 +111,7 @@ fun Routing.boardRouting() {
         ) { board ->
             val sprintDates = SprintDates(board.startDate, board.endDate)
             call.respondText(
-                RequestExecuter.execute(GetBurndownChartInfo(sprintDates)),
+                RequestExecuter.execute(GetBurndownChartInfo(board.id, sprintDates)),
                 contentType = ContentType.Application.Json
             )
         }

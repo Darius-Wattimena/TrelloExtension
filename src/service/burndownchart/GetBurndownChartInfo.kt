@@ -3,10 +3,11 @@ package nl.teqplay.trelloextension.service.burndownchart
 import nl.teqplay.trelloextension.datasource.BurndownChartDataSource
 import nl.teqplay.trelloextension.datasource.Database
 import nl.teqplay.trelloextension.model.BurndownChart
+import nl.teqplay.trelloextension.model.BurndownChartItem
 import nl.teqplay.trelloextension.model.SprintDates
 import nl.teqplay.trelloextension.service.BaseTrelloRequest
 
-class GetBurndownChartInfo(private val sprintDates: SprintDates) : BaseTrelloRequest<BurndownChart>() {
+class GetBurndownChartInfo(private val boardId: String, private val sprintDates: SprintDates) : BaseTrelloRequest<BurndownChart>() {
     private val db = Database.instance
 
     override fun prepare() {
@@ -14,15 +15,13 @@ class GetBurndownChartInfo(private val sprintDates: SprintDates) : BaseTrelloReq
     }
 
     override suspend fun execute(): BurndownChart {
-        val burndownChart = BurndownChart(HashMap(), sprintDates.epochStartDate, sprintDates.epochEndDate)
+        val burndownChart = BurndownChart(mutableListOf(), sprintDates.epochStartDate, sprintDates.epochEndDate)
 
         val databaseItems =
-            BurndownChartDataSource.findAllBetweenEpochDates(sprintDates.epochStartDate, sprintDates.epochEndDate, db)
+            BurndownChartDataSource.findAllBetweenEpochDates(boardId, sprintDates.epochStartDate, sprintDates.epochEndDate, db)
 
-        databaseItems.forEach {
-            burndownChart.items[it.date] = it
-        }
-        burndownChart.items.toSortedMap()
+        burndownChart.items.addAll(databaseItems)
+
         return burndownChart
     }
 }

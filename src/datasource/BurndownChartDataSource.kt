@@ -6,6 +6,7 @@ import kotlin.collections.toList
 
 object BurndownChartDataSource {
     fun findAllBetweenEpochDates(
+        boardId: String,
         startDate: Long,
         endDate: Long,
         database: Database.Companion.DatabaseImpl
@@ -13,6 +14,7 @@ object BurndownChartDataSource {
         val collection = database.burndownChartItemCollection
         return collection.find(
             and(
+                BurndownChartItem::boardId eq boardId,
                 BurndownChartItem::date gte startDate,
                 BurndownChartItem::date lte endDate
             )
