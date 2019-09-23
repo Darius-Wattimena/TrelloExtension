@@ -2,8 +2,12 @@ package nl.teqplay.trelloextension.model
 
 data class Card(
     val id: String,
+    var listId: String,
+    var boardId: String,
     var name: String,
-    var labels: Array<Label>,
-    var actions: Array<Action>,
-    var members: Array<Member>
+    var url: String,
+    var labels: Array<Label> = emptyArray(),
+    var actions: Array<Action>? = emptyArray(),
+    var members: Array<Member>? = emptyArray(),
+    var daysInList: Int
 )

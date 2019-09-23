@@ -6,9 +6,9 @@ import nl.teqplay.trelloextension.helper.TrelloCall
 import nl.teqplay.trelloextension.model.Board
 import nl.teqplay.trelloextension.model.ListStatistics
 import nl.teqplay.trelloextension.model.Statistics
-import nl.teqplay.trelloextension.service.BaseTrelloRequest
+import nl.teqplay.trelloextension.service.BaseRequest
 
-class GetBoardStatistics(private val requestInfo: RequestInfo) : BaseTrelloRequest<Statistics>() {
+class GetBoardStatistics(private val requestInfo: RequestInfo) : BaseRequest<Statistics>() {
     private val boardCall = TrelloCall(requestInfo.key, requestInfo.token)
     private val listsCall = TrelloCall(requestInfo.key, requestInfo.token)
 

@@ -1,10 +1,14 @@
 package nl.teqplay.trelloextension
 
+import com.typesafe.config.ConfigFactory
+import io.ktor.config.HoconApplicationConfig
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import nl.teqplay.trelloextension.datasource.ConfigDataSource
 import nl.teqplay.trelloextension.datasource.Database
 import nl.teqplay.trelloextension.model.SprintLists
+import nl.teqplay.trelloextension.service.card.SyncTestingCards
+import nl.teqplay.trelloextension.service.slack.SendStuckTestingCardsToSlack
 import nl.teqplay.trelloextension.service.sync.SyncBurndownChartInfo
 import nl.teqplay.trelloextension.service.sync.SyncMembers
 import nl.teqplay.trelloextension.service.sync.SyncTeamStatistics
@@ -69,6 +73,29 @@ class SyncTimerTask(
                             config.token,
                             stringToday,
                             sprintLists
+                        )
+                    )
+
+                    RequestExecuter.execute(
+                        SyncTestingCards(
+                            board.id,
+                            config.key,
+                            config.token,
+                            board.testingListId
+                        )
+                    )
+
+
+                    val config = HoconApplicationConfig(ConfigFactory.load())
+                    val databaseConfig = config.config("ktor.application")
+                    val slackToken = databaseConfig.property("slack_token").getString()
+
+                    RequestExecuter.execute(
+                        SendStuckTestingCardsToSlack(
+                            slackToken,
+                            "qDAFPals",
+                            "5411bfbbc1a47d1d609a572b",
+                            3
                         )
                     )
                 }

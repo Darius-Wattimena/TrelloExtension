@@ -9,7 +9,7 @@ import nl.teqplay.trelloextension.helper.TrelloCall
 import nl.teqplay.trelloextension.model.List
 import nl.teqplay.trelloextension.model.SprintLists
 import nl.teqplay.trelloextension.model.TeamStatistics
-import nl.teqplay.trelloextension.service.BaseTrelloRequest
+import nl.teqplay.trelloextension.service.BaseRequest
 
 class SyncTeamStatistics(
     private val boardId: String,
@@ -17,7 +17,7 @@ class SyncTeamStatistics(
     token: String,
     private val today: String,
     private val sprintLists: SprintLists
-) : BaseTrelloRequest<String>() {
+) : BaseRequest<String>() {
     private val db = Database.instance
     private val boardCall = TrelloCall(key, token)
 

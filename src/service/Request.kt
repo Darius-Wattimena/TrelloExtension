@@ -1,6 +1,6 @@
 package nl.teqplay.trelloextension.service
 
-interface TrelloRequest<T> {
+interface Request<T> {
     fun prepare()
     suspend fun execute(): T
 }

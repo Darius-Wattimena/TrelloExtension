@@ -9,13 +9,13 @@ import nl.teqplay.trelloextension.helper.RequestInfo
 import nl.teqplay.trelloextension.helper.TrelloCall
 import nl.teqplay.trelloextension.model.*
 import nl.teqplay.trelloextension.model.List
-import nl.teqplay.trelloextension.service.BaseTrelloRequest
+import nl.teqplay.trelloextension.service.BaseRequest
 
 class SyncBoardLeaderboardData(
     val requestInfo: RequestInfo,
     private val sprintLists: SprintLists,
     private val sprintDates: SprintDates
-) : BaseTrelloRequest<String>() {
+) : BaseRequest<String>() {
     private val db = Database.instance
     private val boardCall = TrelloCall(requestInfo.key, requestInfo.token)
 
@@ -98,18 +98,21 @@ class SyncBoardLeaderboardData(
         resultItems: HashMap<String, LeaderboardItem>
     ) {
         for (card in cards) {
-            for (cardMember in card.members) {
-                val leaderBoardItem = resultItems[cardMember.id]
-                if (leaderBoardItem != null) {
-                    when (listId) {
-                        sprintLists.doneListId -> leaderBoardItem.doneTasks++
-                        sprintLists.doingListId -> leaderBoardItem.doingTasks++
-                        sprintLists.testingListId -> leaderBoardItem.testingTasks++
-                        sprintLists.reviewingListId -> leaderBoardItem.reviewingTasks++
+            if (card.members != null) {
+                for (cardMember in card.members!!) {
+                    val leaderBoardItem = resultItems[cardMember.id]
+                    if (leaderBoardItem != null) {
+                        when (listId) {
+                            sprintLists.doneListId -> leaderBoardItem.doneTasks++
+                            sprintLists.doingListId -> leaderBoardItem.doingTasks++
+                            sprintLists.testingListId -> leaderBoardItem.testingTasks++
+                            sprintLists.reviewingListId -> leaderBoardItem.reviewingTasks++
+                        }
+                        leaderBoardItem.assignedTasks++
                     }
-                    leaderBoardItem.assignedTasks++
                 }
             }
+
         }
     }
 }

@@ -6,9 +6,9 @@ import nl.teqplay.trelloextension.datasource.MemberDataSource
 import nl.teqplay.trelloextension.helper.JsonHelper
 import nl.teqplay.trelloextension.helper.TrelloCall
 import nl.teqplay.trelloextension.model.Member
-import nl.teqplay.trelloextension.service.BaseTrelloRequest
+import nl.teqplay.trelloextension.service.BaseRequest
 
-class SyncMembers(private val boardId: String, apiKey: String, token: String) : BaseTrelloRequest<String>() {
+class SyncMembers(private val boardId: String, apiKey: String, token: String) : BaseRequest<String>() {
     private val call = TrelloCall(apiKey, token)
     private val db = Database.instance
 

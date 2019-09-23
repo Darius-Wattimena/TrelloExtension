@@ -5,7 +5,7 @@ import nl.teqplay.trelloextension.helper.RequestInfo
 import nl.teqplay.trelloextension.helper.TrelloCall
 import nl.teqplay.trelloextension.model.Action
 
-class GetCardActions(private val requestInfo: RequestInfo) : BaseTrelloRequest<Array<Action>>() {
+class GetCardActions(private val requestInfo: RequestInfo) : BaseRequest<Array<Action>>() {
     private val call = TrelloCall(requestInfo.key, requestInfo.token)
 
     override fun prepare() {

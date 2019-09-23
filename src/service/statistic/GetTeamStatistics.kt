@@ -4,11 +4,11 @@ import nl.teqplay.trelloextension.datasource.Database
 import nl.teqplay.trelloextension.datasource.StatisticsDataSource
 import nl.teqplay.trelloextension.helper.TimeHelper
 import nl.teqplay.trelloextension.model.TeamStatistics
-import nl.teqplay.trelloextension.service.BaseTrelloRequest
+import nl.teqplay.trelloextension.service.BaseRequest
 import java.time.ZoneId
 import java.util.*
 
-class GetTeamStatistics(private val boardId: String, val today: String) : BaseTrelloRequest<List<TeamStatistics>>() {
+class GetTeamStatistics(private val boardId: String, val today: String) : BaseRequest<List<TeamStatistics>>() {
     private val db = Database.instance
 
     override fun prepare() {

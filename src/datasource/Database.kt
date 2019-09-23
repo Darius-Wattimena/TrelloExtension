@@ -4,10 +4,7 @@ import com.mongodb.MongoCredential
 import com.mongodb.ServerAddress
 import com.typesafe.config.ConfigFactory
 import io.ktor.config.HoconApplicationConfig
-import nl.teqplay.trelloextension.model.BurndownChartItem
-import nl.teqplay.trelloextension.model.LeaderboardItem
-import nl.teqplay.trelloextension.model.Member
-import nl.teqplay.trelloextension.model.TeamStatistics
+import nl.teqplay.trelloextension.model.*
 import nl.teqplay.trelloextension.model.sync.SyncConfig
 import org.litote.kmongo.KMongo
 import org.litote.kmongo.getCollection
@@ -40,6 +37,7 @@ class Database {
             val leaderboardItemCollection = database.getCollection<LeaderboardItem>()
             val teamStatisticsCollection = database.getCollection<TeamStatistics>()
             val syncConfigCollection = database.getCollection<SyncConfig>()
+            val cardCollection = database.getCollection<Card>()
         }
     }
 }

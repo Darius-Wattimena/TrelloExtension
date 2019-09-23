@@ -4,7 +4,7 @@ import nl.teqplay.trelloextension.Constants
 import nl.teqplay.trelloextension.datasource.BurndownChartDataSource
 import nl.teqplay.trelloextension.datasource.Database
 import nl.teqplay.trelloextension.helper.TrelloCall
-import nl.teqplay.trelloextension.service.BaseTrelloRequest
+import nl.teqplay.trelloextension.service.BaseRequest
 import nl.teqplay.trelloextension.service.burndownchart.DayProcessor
 import java.sql.Date
 import java.time.LocalDate
@@ -15,7 +15,7 @@ class SyncBurndownChartInfo(
     private val token: String,
     private val doneListId: String,
     private val today: String
-) : BaseTrelloRequest<String>() {
+) : BaseRequest<String>() {
     private val boardCall = TrelloCall(key, token)
     private val db = Database.instance
 

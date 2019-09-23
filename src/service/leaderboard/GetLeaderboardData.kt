@@ -4,7 +4,7 @@ import nl.teqplay.trelloextension.datasource.Database
 import nl.teqplay.trelloextension.datasource.LeaderboardDataSource
 import nl.teqplay.trelloextension.model.Leaderboard
 import nl.teqplay.trelloextension.model.LeaderboardItem
-import nl.teqplay.trelloextension.service.BaseTrelloRequest
+import nl.teqplay.trelloextension.service.BaseRequest
 import java.sql.Date
 import java.time.LocalDate
 
@@ -12,7 +12,7 @@ class GetLeaderboardData(
     private val id: String,
     private val startDate: String,
     private val endDate: String
-) : BaseTrelloRequest<Leaderboard>() {
+) : BaseRequest<Leaderboard>() {
 
     private val db = Database.instance
 

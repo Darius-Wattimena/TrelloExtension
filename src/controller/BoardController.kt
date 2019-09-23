@@ -19,8 +19,10 @@ import nl.teqplay.trelloextension.service.board.GetBoardStatistics
 import nl.teqplay.trelloextension.service.board.GetDetailedBoard
 import nl.teqplay.trelloextension.service.board.GetLastBoardAction
 import nl.teqplay.trelloextension.service.burndownchart.GetBurndownChartInfo
+import nl.teqplay.trelloextension.service.card.SyncTestingCards
 import nl.teqplay.trelloextension.service.leaderboard.GetLeaderboardData
 import nl.teqplay.trelloextension.service.member.GetBoardMembers
+import nl.teqplay.trelloextension.service.slack.SendStuckTestingCardsToSlack
 import nl.teqplay.trelloextension.service.statistic.GetTeamStatistics
 
 data class Model<T>(val items: MutableList<T>)
@@ -57,8 +59,19 @@ data class boardMembers(val id: String, val key: String, val token: String)
 @Location("/board/{id}/teamstatistics")
 data class boardTeamStatistics(val id: String, val today: String)
 
+@Group("Board operations")
+@Location("/board/{id}/sync/card")
+data class sync(val id: String, val key: String, val token: String, val testingListId: String)
+
 fun Routing.boardRouting() {
     authenticate("basicAuth") {
+        get<sync>("temp".responds(ok<String>())) { board ->
+            call.respondText(
+                RequestExecuter.execute(SyncTestingCards(board.id, board.key, board.token, board.testingListId)),
+                contentType = ContentType.Application.Json
+            )
+        }
+
         get<board>("Find a board".responds(ok<Board>(), badRequest())) { board ->
             val request = RequestInfo(board.id, board.key, board.token)
             call.respondText(

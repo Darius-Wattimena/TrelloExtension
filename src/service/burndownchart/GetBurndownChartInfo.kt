@@ -3,11 +3,10 @@ package nl.teqplay.trelloextension.service.burndownchart
 import nl.teqplay.trelloextension.datasource.BurndownChartDataSource
 import nl.teqplay.trelloextension.datasource.Database
 import nl.teqplay.trelloextension.model.BurndownChart
-import nl.teqplay.trelloextension.model.BurndownChartItem
 import nl.teqplay.trelloextension.model.SprintDates
-import nl.teqplay.trelloextension.service.BaseTrelloRequest
+import nl.teqplay.trelloextension.service.BaseRequest
 
-class GetBurndownChartInfo(private val boardId: String, private val sprintDates: SprintDates) : BaseTrelloRequest<BurndownChart>() {
+class GetBurndownChartInfo(private val boardId: String, private val sprintDates: SprintDates) : BaseRequest<BurndownChart>() {
     private val db = Database.instance
 
     override fun prepare() {
