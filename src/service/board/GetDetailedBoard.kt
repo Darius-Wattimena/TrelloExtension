@@ -14,7 +14,7 @@ class GetDetailedBoard(private val requestInfo: RequestInfo) : BaseRequest<Board
 
     override fun prepare() {
         boardCall.request = "/boards/${requestInfo.id}"
-        boardListsCall.request = "boards/${requestInfo.id}/lists"
+        boardListsCall.request = "/boards/${requestInfo.id}/lists"
     }
 
     override suspend fun execute(): Board {
