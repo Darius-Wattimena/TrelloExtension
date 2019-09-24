@@ -2,7 +2,8 @@ package nl.teqplay.trelloextension
 
 import com.typesafe.config.ConfigFactory
 import io.ktor.config.HoconApplicationConfig
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import nl.teqplay.trelloextension.datasource.ConfigDataSource
 import nl.teqplay.trelloextension.datasource.Database
@@ -30,8 +31,7 @@ class SyncTimerTask(
 
     override fun run() {
         logger.info("Executing sync timer task")
-        scheduleNewTaskForTomorrow(scheduler, zonedDateTime)
-        GlobalScope.launch {
+        CoroutineScope(IO).launch {
             val config = ConfigDataSource.getSyncConfig(Database.instance)
             if (config != null) {
                 val today = Calendar.getInstance(TimeZone.getTimeZone("UTC")).also {
@@ -100,12 +100,18 @@ class SyncTimerTask(
                     )
                 }
             }
+            scheduleNewTaskForTomorrow(scheduler, zonedDateTime)
         }
     }
 
     private fun scheduleNewTaskForTomorrow(scheduler: ScheduledExecutorService, currentDateTime: ZonedDateTime) {
         logger.info("Scheduling new sync timer task")
-        val nextZonedDateTime = currentDateTime.plusMinutes(1)
+        val nextZonedDateTime = currentDateTime
+            .withHour(2)
+            .withMinute(0)
+            .withSecond(0)
+            .plusDays(1)
+
         val duration = Duration.between(currentDateTime, nextZonedDateTime)
         val initialDelay = duration.seconds
 
