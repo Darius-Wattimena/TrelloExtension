@@ -10,7 +10,7 @@ class GetList(private val requestInfo: RequestInfo) : BaseRequest<List>() {
     private val call = TrelloCall(requestInfo.key, requestInfo.token)
 
     override fun prepare() {
-        call.request = "lists/${requestInfo.id}"
+        call.request = "/lists/${requestInfo.id}"
     }
 
     override suspend fun execute(): List {

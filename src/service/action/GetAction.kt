@@ -10,7 +10,7 @@ class GetAction(private val requestInfo: RequestInfo) : BaseRequest<Action>() {
     private val call = TrelloCall(requestInfo.key, requestInfo.token)
 
     override fun prepare() {
-        call.request = "actions/${requestInfo.id}"
+        call.request = "/actions/${requestInfo.id}"
     }
 
     override suspend fun execute(): Action {

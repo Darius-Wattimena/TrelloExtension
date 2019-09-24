@@ -12,7 +12,7 @@ class GetDetailedList(private val requestInfo: RequestInfo) : BaseRequest<List>(
     private val cardsCall = TrelloCall(requestInfo.key, requestInfo.token)
 
     override fun prepare() {
-        call.request = "lists/${requestInfo.id}"
+        call.request = "/lists/${requestInfo.id}"
         cardsCall.request = "lists/${requestInfo.id}/cards"
     }
 

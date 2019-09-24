@@ -9,7 +9,7 @@ import nl.teqplay.trelloextension.model.BurndownChartItem
 import nl.teqplay.trelloextension.model.Card
 import nl.teqplay.trelloextension.model.List
 
-class DayProcessor() {
+class DayProcessor {
 
     suspend fun process(
         key: String,

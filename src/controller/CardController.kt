@@ -15,7 +15,7 @@ import nl.teqplay.trelloextension.RequestExecuter
 import nl.teqplay.trelloextension.helper.RequestInfo
 import nl.teqplay.trelloextension.model.Action
 import nl.teqplay.trelloextension.model.Card
-import nl.teqplay.trelloextension.service.GetCardActions
+import nl.teqplay.trelloextension.service.action.GetCardActions
 import nl.teqplay.trelloextension.service.card.GetCard
 
 @Group("Card operations")

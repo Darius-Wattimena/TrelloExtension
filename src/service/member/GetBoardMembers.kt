@@ -10,7 +10,7 @@ class GetBoardMembers(private val requestInfo: RequestInfo) : BaseRequest<Array<
     private val call = TrelloCall(requestInfo.key, requestInfo.token)
 
     override fun prepare() {
-        call.request = "boards/${requestInfo.id}/members"
+        call.request = "/boards/${requestInfo.id}/members"
         call.parameters["fields"] = "fullName,name,role,avatarUrl,url"
     }
 

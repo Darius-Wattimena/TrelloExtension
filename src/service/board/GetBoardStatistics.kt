@@ -13,10 +13,10 @@ class GetBoardStatistics(private val requestInfo: RequestInfo) : BaseRequest<Sta
     private val listsCall = TrelloCall(requestInfo.key, requestInfo.token)
 
     override fun prepare() {
-        boardCall.request = "board/${requestInfo.id}"
+        boardCall.request = "/board/${requestInfo.id}"
         boardCall.parameters["fields"] = "name"
 
-        listsCall.request = "board/${requestInfo.id}/lists"
+        listsCall.request = "/board/${requestInfo.id}/lists"
         listsCall.parameters["fields"] = "name"
         listsCall.parameters["cards"] = "all"
         listsCall.parameters["card_fields"] = "labels, name"

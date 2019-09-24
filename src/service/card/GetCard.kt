@@ -10,7 +10,7 @@ class GetCard(private val requestInfo: RequestInfo) : BaseRequest<Card>() {
     private val call = TrelloCall(requestInfo.key, requestInfo.token)
 
     override fun prepare() {
-        call.request = "cards/${requestInfo.id}"
+        call.request = "/cards/${requestInfo.id}"
     }
 
     override suspend fun execute(): Card {

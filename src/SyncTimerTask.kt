@@ -1,23 +1,20 @@
 package nl.teqplay.trelloextension
 
-import com.typesafe.config.ConfigFactory
-import io.ktor.config.HoconApplicationConfig
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import nl.teqplay.trelloextension.datasource.ConfigDataSource
 import nl.teqplay.trelloextension.datasource.Database
+import nl.teqplay.trelloextension.helper.TimeHelper
+import nl.teqplay.trelloextension.helper.TimeHelper.getISODateForTimerTask
 import nl.teqplay.trelloextension.model.SprintLists
 import nl.teqplay.trelloextension.service.card.SyncTestingCards
-import nl.teqplay.trelloextension.service.slack.SendStuckTestingCardsToSlack
 import nl.teqplay.trelloextension.service.sync.SyncBurndownChartInfo
 import nl.teqplay.trelloextension.service.sync.SyncMembers
 import nl.teqplay.trelloextension.service.sync.SyncTeamStatistics
 import org.slf4j.LoggerFactory
 import java.time.Duration
-import java.time.ZoneId
 import java.time.ZonedDateTime
-import java.time.format.DateTimeFormatter
 import java.util.*
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit
@@ -34,15 +31,7 @@ class SyncTimerTask(
         CoroutineScope(IO).launch {
             val config = ConfigDataSource.getSyncConfig(Database.instance)
             if (config != null) {
-                val today = Calendar.getInstance(TimeZone.getTimeZone("UTC")).also {
-                    it.set(Calendar.HOUR_OF_DAY, 0)
-                    it.set(Calendar.MINUTE, 0)
-                    it.set(Calendar.SECOND, 0)
-                }
-
-                val convertedToday = ZonedDateTime.ofInstant(today.toInstant(), ZoneId.of("UTC"))
-
-                val stringToday = DateTimeFormatter.ISO_LOCAL_DATE.format(convertedToday)
+                val stringToday = getISODateForTimerTask()
 
                 for (board in config.boards) {
                     val sprintLists =
@@ -84,20 +73,6 @@ class SyncTimerTask(
                             board.testingListId
                         )
                     )
-
-
-                    val config = HoconApplicationConfig(ConfigFactory.load())
-                    val databaseConfig = config.config("ktor.application")
-                    val slackToken = databaseConfig.property("slack_token").getString()
-
-                    RequestExecuter.execute(
-                        SendStuckTestingCardsToSlack(
-                            slackToken,
-                            "qDAFPals",
-                            "5411bfbbc1a47d1d609a572b",
-                            3
-                        )
-                    )
                 }
             }
             scheduleNewTaskForTomorrow(scheduler, zonedDateTime)
@@ -106,20 +81,10 @@ class SyncTimerTask(
 
     private fun scheduleNewTaskForTomorrow(scheduler: ScheduledExecutorService, currentDateTime: ZonedDateTime) {
         logger.info("Scheduling new sync timer task")
-        val nextZonedDateTime = currentDateTime
-            .withHour(2)
-            .withMinute(0)
-            .withSecond(0)
-            .plusDays(1)
-
-        val duration = Duration.between(currentDateTime, nextZonedDateTime)
-        val initialDelay = duration.seconds
-
-        scheduler.scheduleAtFixedRate(
-            SyncTimerTask(scheduler, nextZonedDateTime),
-            initialDelay,
-            TimeUnit.DAYS.toSeconds(1),
-            TimeUnit.SECONDS
+        TimeHelper.scheduleNewTaskForTheNextDay(
+            SyncTimerTask(scheduler, currentDateTime),
+            scheduler,
+            currentDateTime
         )
     }
 }

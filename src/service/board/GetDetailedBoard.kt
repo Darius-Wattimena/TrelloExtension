@@ -13,7 +13,7 @@ class GetDetailedBoard(private val requestInfo: RequestInfo) : BaseRequest<Board
     private val boardListsCall = TrelloCall(requestInfo.key, requestInfo.token)
 
     override fun prepare() {
-        boardCall.request = "boards/${requestInfo.id}"
+        boardCall.request = "/boards/${requestInfo.id}"
         boardListsCall.request = "boards/${requestInfo.id}/lists"
     }
 
@@ -29,7 +29,7 @@ class GetDetailedBoard(private val requestInfo: RequestInfo) : BaseRequest<Board
 
         for (list in boardLists) {
             val listCardsCall = TrelloCall(requestInfo.key, requestInfo.token)
-            listCardsCall.request = "lists/${list.id}/cards"
+            listCardsCall.request = "/lists/${list.id}/cards"
             val listCards = JsonHelper.fromJson(gson, listCardsCall, client, Array<Card>::class.java)
             list.cards = listCards
         }

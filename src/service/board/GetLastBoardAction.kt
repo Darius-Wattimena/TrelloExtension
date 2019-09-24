@@ -10,7 +10,7 @@ class GetLastBoardAction(val requestInfo: RequestInfo) : BaseRequest<Action>() {
     private val call = TrelloCall(requestInfo.key, requestInfo.token)
 
     override fun prepare() {
-        call.request = "boards/${requestInfo.id}/actions"
+        call.request = "/boards/${requestInfo.id}/actions"
         call.parameters["limit"] = "1"
         call.parameters["actions_fields"] = "type,date"
     }

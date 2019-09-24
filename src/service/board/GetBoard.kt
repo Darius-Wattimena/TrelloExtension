@@ -10,7 +10,7 @@ class GetBoard(private val requestInfo: RequestInfo) : BaseRequest<Board>() {
     private val call = TrelloCall(requestInfo.key, requestInfo.token)
 
     override fun prepare() {
-        call.request = "boards/${requestInfo.id}"
+        call.request = "/boards/${requestInfo.id}"
     }
 
     override suspend fun execute(): Board {
