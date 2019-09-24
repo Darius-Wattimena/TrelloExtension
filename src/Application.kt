@@ -12,6 +12,7 @@ import io.ktor.auth.UserIdPrincipal
 import io.ktor.auth.basic
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.apache.Apache
+import io.ktor.client.features.ClientRequestException
 import io.ktor.features.*
 import io.ktor.gson.gson
 import io.ktor.http.HttpHeaders
@@ -22,7 +23,6 @@ import io.ktor.response.respond
 import io.ktor.routing.route
 import io.ktor.routing.routing
 import nl.teqplay.trelloextension.controller.*
-import nl.teqplay.trelloextension.helper.MissingParameterException
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.util.concurrent.Executors
@@ -86,7 +86,7 @@ fun Application.module(@Suppress("UNUSED_PARAMETER") testing: Boolean = false) {
     }
 
     install(StatusPages) {
-        exception<MissingParameterException> { cause ->
+        exception<ClientRequestException> { cause ->
             cause.message?.let { call.respond(HttpStatusCode.BadRequest, it) }
         }
     }
@@ -145,9 +145,6 @@ fun Application.module(@Suppress("UNUSED_PARAMETER") testing: Boolean = false) {
             info = information
             components.schemas["Burndownchart"] = burndownchartSchemaMap
         }
-    }
-
-    val client = HttpClient(Apache) {
     }
 
     routing {

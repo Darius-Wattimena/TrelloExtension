@@ -29,7 +29,6 @@ data class cardActions(val id: String, val key: String, val token: String)
 fun Routing.cardRouting() {
     authenticate("basicAuth") {
         get<card>("Find a card".responds(ok<Card>(), notFound())) { card ->
-            val queryParameters = call.request.queryParameters
             val request = RequestInfo(card.id, card.key, card.token)
             call.respondText(
                 RequestExecuter.execute(GetCard(request)),
@@ -38,7 +37,6 @@ fun Routing.cardRouting() {
         }
 
         get<cardActions>("Find all the card actions".responds(ok<Array<Action>>(), notFound())) { card ->
-            val queryParameters = call.request.queryParameters
             val request = RequestInfo(card.id, card.key, card.token)
             call.respondText(
                 RequestExecuter.execute(GetCardActions(request)),

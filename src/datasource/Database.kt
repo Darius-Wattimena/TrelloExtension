@@ -14,8 +14,8 @@ class Database {
         val instance = DatabaseImpl()
 
         class DatabaseImpl internal constructor() {
-            val config = HoconApplicationConfig(ConfigFactory.load())
-            val databaseConfig = config.config("ktor.application.db")
+            private val config = HoconApplicationConfig(ConfigFactory.load())
+            private val databaseConfig = config.config("ktor.application.db")
             private val name = databaseConfig.property("name").getString()
             private val host = databaseConfig.property("host").getString()
             private val port = databaseConfig.property("port").getString().toInt()

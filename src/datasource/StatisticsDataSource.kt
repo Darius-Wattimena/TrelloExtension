@@ -7,7 +7,6 @@ import org.litote.kmongo.or
 import org.litote.kmongo.updateOne
 
 object StatisticsDataSource {
-
     fun findAllTeamStatistics(
         boardId: String,
         today: Long,

@@ -28,7 +28,6 @@ data class detailed(val id: String, val key: String, val token: String)
 fun Routing.listRouting() {
     authenticate("basicAuth") {
         get<list>("Find a list".responds(ok<List>(), notFound())) { list ->
-            val queryParameters = call.request.queryParameters
             val request = RequestInfo(list.id, list.key, list.token)
             call.respondText(
                 RequestExecuter.execute(GetList(request)),
@@ -37,7 +36,6 @@ fun Routing.listRouting() {
         }
 
         get<detailed>("Find detailed list".responds(ok<List>(), notFound())) { list ->
-            val queryParameters = call.request.queryParameters
             val request = RequestInfo(list.id, list.key, list.token)
             call.respondText(
                 RequestExecuter.execute(GetDetailedList(request)),
