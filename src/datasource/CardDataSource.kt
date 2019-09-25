@@ -1,30 +1,38 @@
 package nl.teqplay.trelloextension.datasource
 
 import nl.teqplay.trelloextension.model.Card
+import org.bson.conversions.Bson
 import org.litote.kmongo.*
 import kotlin.collections.toList
 
 object CardDataSource {
-    fun findAllTestingCards(boardId: String, testingListId: String, minimumDaysInList: Int, database: Database.Companion.DatabaseImpl) : List<Card> {
+    fun findAllCardsOfList(boardId: String, listId: String, minimumDaysInList: Int, database: Database.Companion.DatabaseImpl) : List<Card> {
         val collection = database.cardCollection
         return collection.find(
             and(
                 Card::boardId eq boardId,
-                Card::listId eq testingListId,
+                Card::listId eq listId,
                 Card::daysInList gte minimumDaysInList
             )
         ).toList()
     }
 
-    fun findAllTestingCards(boardId: String, testingListId: String, database: Database.Companion.DatabaseImpl) : List<Card> {
+    fun findAllCardsOfList(boardId: String, listIds: Array<String>, database: Database.Companion.DatabaseImpl) : List<Card> {
         val collection = database.cardCollection
+        val listsSelect = mutableListOf<Bson>()
+
+        for (listId in listIds) {
+            listsSelect.add(Card::listId eq listId)
+        }
         return collection.find(
             and(
                 Card::boardId eq boardId,
-                Card::listId eq testingListId
+                or(listsSelect)
             )
         ).toList()
     }
+
+
 
     fun saveCard(card: Card, boardId: String, database: Database.Companion.DatabaseImpl) {
         val collection = database.cardCollection
@@ -50,5 +58,19 @@ object CardDataSource {
         collection.deleteOne(
             Card::id eq cardId
         )
+    }
+
+    fun findAllNewCardsOfAllLists(
+        boardId: String,
+        todayDate: String,
+        database: Database.Companion.DatabaseImpl
+    ) : List<Card> {
+        val collection = database.cardCollection
+        return collection.find(
+            and(
+                Card::boardId eq boardId,
+                Card::dateAdded eq todayDate
+            )
+        ).toList()
     }
 }

@@ -18,7 +18,7 @@ class SendStuckTestingCardsToSlack(token: String, private val boardId: String, p
     }
 
     override suspend fun execute() {
-        val stuckTestingCards = CardDataSource.findAllTestingCards(
+        val stuckTestingCards = CardDataSource.findAllCardsOfList(
             boardId,
             testingListId,
             minimumDaysInList,

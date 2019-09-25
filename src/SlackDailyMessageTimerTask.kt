@@ -23,9 +23,9 @@ class SlackDailyMessageTimerTask(
     override fun run() {
         logger.info("Executing sync timer task")
         CoroutineScope(Dispatchers.IO).launch {
-            val config = ConfigDataSource.getSyncConfig(Database.instance)
-            if (config != null) {
-                for (board in config.boards) {
+            val syncConfig = ConfigDataSource.getSyncConfig(Database.instance)
+            if (syncConfig != null) {
+                for (board in syncConfig.boards) {
                     val config = HoconApplicationConfig(ConfigFactory.load())
                     val databaseConfig = config.config("ktor.application")
                     val slackToken = databaseConfig.property("slack_token").getString()

@@ -27,7 +27,7 @@ object TimeHelper {
         return epochSeconds * 1000;
     }
 
-    fun getISODateForTimerTask(): String {
+    fun getISODateForToday(): String {
         val today = Calendar.getInstance(TimeZone.getTimeZone("UTC")).also {
             it.set(Calendar.HOUR_OF_DAY, 0)
             it.set(Calendar.MINUTE, 0)
