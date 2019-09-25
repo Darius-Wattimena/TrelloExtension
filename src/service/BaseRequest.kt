@@ -6,4 +6,8 @@ import nl.teqplay.trelloextension.helper.JsonHelper
 abstract class BaseRequest<T> : Request<T> {
     val client = JsonHelper.client()
     val gson = Gson()
+
+    override fun close() {
+        client.close()
+    }
 }

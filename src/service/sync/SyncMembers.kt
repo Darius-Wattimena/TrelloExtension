@@ -5,7 +5,7 @@ import nl.teqplay.trelloextension.datasource.Database
 import nl.teqplay.trelloextension.datasource.MemberDataSource
 import nl.teqplay.trelloextension.helper.JsonHelper
 import nl.teqplay.trelloextension.helper.TrelloCall
-import nl.teqplay.trelloextension.model.Member
+import nl.teqplay.trelloextension.model.trello.Member
 import nl.teqplay.trelloextension.service.BaseRequest
 
 class SyncMembers(private val boardId: String, apiKey: String, token: String) : BaseRequest<String>() {

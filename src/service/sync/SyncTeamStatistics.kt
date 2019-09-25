@@ -6,8 +6,8 @@ import nl.teqplay.trelloextension.datasource.StatisticsDataSource
 import nl.teqplay.trelloextension.helper.JsonHelper
 import nl.teqplay.trelloextension.helper.TimeHelper
 import nl.teqplay.trelloextension.helper.TrelloCall
-import nl.teqplay.trelloextension.model.List
-import nl.teqplay.trelloextension.model.SprintLists
+import nl.teqplay.trelloextension.model.BoardLists
+import nl.teqplay.trelloextension.model.trello.List
 import nl.teqplay.trelloextension.model.TeamStatistics
 import nl.teqplay.trelloextension.service.BaseRequest
 
@@ -16,7 +16,7 @@ class SyncTeamStatistics(
     key: String,
     token: String,
     private val today: String,
-    private val sprintLists: SprintLists
+    private val sprintLists: BoardLists
 ) : BaseRequest<String>() {
     private val db = Database.instance
     private val boardCall = TrelloCall(key, token)
@@ -36,10 +36,10 @@ class SyncTeamStatistics(
 
         for (list in lists) {
             when (list.id) {
-                sprintLists.doingListId -> resultItem.totalDoing += list.cards.count()
-                sprintLists.doneListId -> resultItem.totalDone += list.cards.count()
-                sprintLists.reviewingListId -> resultItem.totalReviewing += list.cards.count()
-                sprintLists.testingListId -> resultItem.totalTesting += list.cards.count()
+                sprintLists.DoingListId -> resultItem.totalDoing += list.cards.count()
+                sprintLists.DoneListId -> resultItem.totalDone += list.cards.count()
+                sprintLists.ReviewingListId -> resultItem.totalReviewing += list.cards.count()
+                sprintLists.TestingListId -> resultItem.totalTesting += list.cards.count()
             }
         }
 

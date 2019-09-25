@@ -11,10 +11,10 @@ import io.ktor.http.ContentType
 import io.ktor.locations.Location
 import io.ktor.response.respondText
 import io.ktor.routing.Routing
-import nl.teqplay.trelloextension.RequestExecuter
+import nl.teqplay.trelloextension.RequestExecutor
 import nl.teqplay.trelloextension.helper.RequestInfo
-import nl.teqplay.trelloextension.model.Action
-import nl.teqplay.trelloextension.model.Card
+import nl.teqplay.trelloextension.model.trello.Action
+import nl.teqplay.trelloextension.model.trello.Card
 import nl.teqplay.trelloextension.service.action.GetCardActions
 import nl.teqplay.trelloextension.service.card.GetCard
 
@@ -31,7 +31,7 @@ fun Routing.cardRouting() {
         get<card>("Find a card".responds(ok<Card>(), notFound())) { card ->
             val request = RequestInfo(card.id, card.key, card.token)
             call.respondText(
-                RequestExecuter.execute(GetCard(request)),
+                RequestExecutor.execute(GetCard(request)),
                 contentType = ContentType.Application.Json
             )
         }
@@ -39,7 +39,7 @@ fun Routing.cardRouting() {
         get<cardActions>("Find all the card actions".responds(ok<Array<Action>>(), notFound())) { card ->
             val request = RequestInfo(card.id, card.key, card.token)
             call.respondText(
-                RequestExecuter.execute(GetCardActions(request)),
+                RequestExecutor.execute(GetCardActions(request)),
                 contentType = ContentType.Application.Json
             )
         }

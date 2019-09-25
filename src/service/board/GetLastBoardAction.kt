@@ -3,7 +3,7 @@ package nl.teqplay.trelloextension.service.board
 import nl.teqplay.trelloextension.helper.JsonHelper
 import nl.teqplay.trelloextension.helper.RequestInfo
 import nl.teqplay.trelloextension.helper.TrelloCall
-import nl.teqplay.trelloextension.model.Action
+import nl.teqplay.trelloextension.model.trello.Action
 import nl.teqplay.trelloextension.service.BaseRequest
 
 class GetLastBoardAction(val requestInfo: RequestInfo) : BaseRequest<Action>() {
@@ -17,7 +17,6 @@ class GetLastBoardAction(val requestInfo: RequestInfo) : BaseRequest<Action>() {
 
     override suspend fun execute(): Action {
         val actions = JsonHelper.fromJson(gson, call, client, Array<Action>::class.java)
-        client.close()
         return actions.first()
     }
 }

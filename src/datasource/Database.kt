@@ -6,6 +6,8 @@ import com.typesafe.config.ConfigFactory
 import io.ktor.config.HoconApplicationConfig
 import nl.teqplay.trelloextension.model.*
 import nl.teqplay.trelloextension.model.sync.SyncConfig
+import nl.teqplay.trelloextension.model.trello.Card
+import nl.teqplay.trelloextension.model.trello.Member
 import org.litote.kmongo.KMongo
 import org.litote.kmongo.getCollection
 

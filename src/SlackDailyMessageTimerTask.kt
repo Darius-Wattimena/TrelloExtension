@@ -7,6 +7,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import nl.teqplay.trelloextension.datasource.ConfigDataSource
 import nl.teqplay.trelloextension.datasource.Database
+import nl.teqplay.trelloextension.helper.BoardHelper
 import nl.teqplay.trelloextension.helper.TimeHelper
 import nl.teqplay.trelloextension.service.slack.SendStuckTestingCardsToSlack
 import org.slf4j.LoggerFactory
@@ -26,15 +27,16 @@ class SlackDailyMessageTimerTask(
             val syncConfig = ConfigDataSource.getSyncConfig(Database.instance)
             if (syncConfig != null) {
                 for (board in syncConfig.boards) {
+                    val boardLists = BoardHelper.getBoardLists(board.id, syncConfig.key, syncConfig.token)
                     val config = HoconApplicationConfig(ConfigFactory.load())
                     val databaseConfig = config.config("ktor.application")
                     val slackToken = databaseConfig.property("slack_token").getString()
 
-                    RequestExecuter.execute(
+                    RequestExecutor.execute(
                         SendStuckTestingCardsToSlack(
                             slackToken,
                             board.id,
-                            board.testingListId,
+                            boardLists.TestingListId,
                             3
                         )
                     )

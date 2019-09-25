@@ -14,6 +14,7 @@ class SyncBurndownChartInfo(
     private val key: String,
     private val token: String,
     private val doneListId: String,
+    private val readyListId: String,
     private val today: String
 ) : BaseRequest<String>() {
     private val boardCall = TrelloCall(key, token)
@@ -30,7 +31,7 @@ class SyncBurndownChartInfo(
         val todayDate = Date.valueOf(today).time
 
         DayProcessor().run {
-            val details = process(key, token, gson, boardCall, client, doneListId)
+            val details = process(key, token, gson, boardCall, client, doneListId, readyListId)
             convertToBurndownChartItem(boardId, details, todayDate)
         }.also {
             BurndownChartDataSource.updateWhenBurndownChartItemDateIsFoundOtherwiseInsert(it, db)

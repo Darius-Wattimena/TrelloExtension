@@ -5,10 +5,10 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import nl.teqplay.trelloextension.datasource.ConfigDataSource
 import nl.teqplay.trelloextension.datasource.Database
+import nl.teqplay.trelloextension.helper.BoardHelper
 import nl.teqplay.trelloextension.helper.TimeHelper
 import nl.teqplay.trelloextension.helper.TimeHelper.getISODateForToday
-import nl.teqplay.trelloextension.model.List
-import nl.teqplay.trelloextension.model.SprintLists
+import nl.teqplay.trelloextension.model.trello.List
 import nl.teqplay.trelloextension.model.sync.BoardSyncConfig
 import nl.teqplay.trelloextension.model.sync.SyncConfig
 import nl.teqplay.trelloextension.service.card.SyncCardsOfLists
@@ -42,57 +42,9 @@ class SyncTimerTask(
                         config.token
                     ).execute()
 
-                    var niceToHaveListId = ""
-                    var prioListId = ""
-                    var doingListId = ""
-                    var reviewingListId = ""
-                    var testingListId = ""
-                    var readyListId = ""
-                    var impedimentsListId = ""
-                    var doneListId = ""
+                    val boardLists = BoardHelper.createBoardLists(lists)
 
-                    val potentialDoneLists = mutableListOf<List>()
-
-                    for (list in lists) {
-                        when (list.name.toLowerCase()) {
-                            Constants.NICETOHAVE_LIST_NAME -> niceToHaveListId = list.id
-                            Constants.PRIO_LIST_NAME -> prioListId = list.id
-                            Constants.DOING_LIST_NAME -> doingListId = list.id
-                            Constants.REVIEWING_LIST_NAME -> reviewingListId = list.id
-                            Constants.TESTING_LIST_NAME -> testingListId = list.id
-                            Constants.READY_LIST_NAME -> readyListId = list.id
-                            Constants.IMPEDIMENTS_LIST_NAME -> impedimentsListId = list.id
-                            else -> {
-                                if (list.name.toLowerCase().contains(Constants.DONE_LIST_NAME)) {
-                                    potentialDoneLists.add(list)
-                                }
-                            }
-                        }
-                    }
-
-                    var listWithHighestNumber : List? = null
-                    var numberOfHighestList = 0
-
-                    val regex = Regex("""([0-9])\w+""")
-                    for (list in potentialDoneLists) {
-                        val result = regex.find(list.name)
-                        if (result != null) {
-                            val currentListNumber = result.value.toInt()
-                            if (currentListNumber > numberOfHighestList) {
-                                listWithHighestNumber = list
-                                numberOfHighestList = currentListNumber
-                            }
-                        }
-                    }
-
-                    if (listWithHighestNumber != null) {
-                        doneListId = listWithHighestNumber.id
-                    }
-
-                    val sprintLists =
-                        SprintLists(doneListId, doingListId, testingListId, reviewingListId)
-
-                    RequestExecuter.execute(
+                    RequestExecutor.execute(
                         SyncMembers(
                             board.id,
                             config.key,
@@ -100,23 +52,24 @@ class SyncTimerTask(
                         )
                     )
 
-                    RequestExecuter.execute(
+                    RequestExecutor.execute(
                         SyncBurndownChartInfo(
                             board.id,
                             config.key,
                             config.token,
-                            board.doneListId,
+                            boardLists.DoneListId,
+                            boardLists.ReadyListId,
                             stringToday
                         )
                     )
 
-                    RequestExecuter.execute(
+                    RequestExecutor.execute(
                         SyncTeamStatistics(
                             board.id,
                             config.key,
                             config.token,
                             stringToday,
-                            sprintLists
+                            boardLists
                         )
                     )
 
@@ -133,7 +86,7 @@ class SyncTimerTask(
         lists: Array<List>,
         stringToday: String
     ) {
-        RequestExecuter.execute(
+        RequestExecutor.execute(
             SyncCardsOfLists(
                 board.id,
                 config.key,

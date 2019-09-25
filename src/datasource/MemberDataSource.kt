@@ -1,6 +1,6 @@
 package nl.teqplay.trelloextension.datasource
 
-import nl.teqplay.trelloextension.model.Member
+import nl.teqplay.trelloextension.model.trello.Member
 import org.litote.kmongo.eq
 import org.litote.kmongo.updateOne
 

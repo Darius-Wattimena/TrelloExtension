@@ -10,8 +10,8 @@ import io.ktor.locations.Location
 import io.ktor.response.respond
 import io.ktor.response.respondText
 import io.ktor.routing.Routing
-import nl.teqplay.trelloextension.RequestExecuter
-import nl.teqplay.trelloextension.model.Member
+import nl.teqplay.trelloextension.RequestExecutor
+import nl.teqplay.trelloextension.model.trello.Member
 import nl.teqplay.trelloextension.model.sync.SyncConfig
 import nl.teqplay.trelloextension.service.config.GetSyncConfig
 import nl.teqplay.trelloextension.service.config.PostSyncConfig
@@ -28,13 +28,13 @@ fun Routing.configRouting() {
     authenticate("basicAuth") {
         get<syncInfo>("Find sync info".responds(ok<Member>(), notFound())) {
             call.respondText(
-                RequestExecuter.execute(GetSyncConfig()),
+                RequestExecutor.execute(GetSyncConfig()),
                 contentType = ContentType.Application.Json
             )
         }
 
         put<saveSyncInfo, SyncConfig>("Save sync info".responds(ok<String>(), notFound())) { syncCall, syncConfig ->
-            RequestExecuter.execute(PostSyncConfig(syncConfig))
+            RequestExecutor.execute(PostSyncConfig(syncConfig))
             call.respond(HttpStatusCode.Accepted, "Completed save")
         }
     }

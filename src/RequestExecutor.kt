@@ -5,7 +5,7 @@ import nl.teqplay.trelloextension.service.BaseRequest
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-class RequestExecuter {
+class RequestExecutor {
     companion object {
         private val gson = Gson()
         private val logger: Logger = LoggerFactory.getLogger(this::class.java)
@@ -20,7 +20,9 @@ class RequestExecuter {
             logger.debug("Preparing Request")
             request.prepare()
             logger.debug("Executing Request")
-            return request.execute()
+            val result = request.execute()
+            request.close()
+            return result
         }
 
         private fun <T> processResult(result: T): String {

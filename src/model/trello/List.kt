@@ -1,4 +1,4 @@
-package nl.teqplay.trelloextension.model
+package nl.teqplay.trelloextension.model.trello
 
 data class List(
     var id: String,

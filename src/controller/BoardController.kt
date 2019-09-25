@@ -11,9 +11,13 @@ import io.ktor.http.ContentType
 import io.ktor.locations.Location
 import io.ktor.response.respondText
 import io.ktor.routing.Routing
-import nl.teqplay.trelloextension.RequestExecuter
+import nl.teqplay.trelloextension.RequestExecutor
 import nl.teqplay.trelloextension.helper.RequestInfo
 import nl.teqplay.trelloextension.model.*
+import nl.teqplay.trelloextension.model.trello.Action
+import nl.teqplay.trelloextension.model.trello.Board
+import nl.teqplay.trelloextension.model.trello.Card
+import nl.teqplay.trelloextension.model.trello.Member
 import nl.teqplay.trelloextension.service.board.GetBoard
 import nl.teqplay.trelloextension.service.board.GetBoardStatistics
 import nl.teqplay.trelloextension.service.board.GetDetailedBoard
@@ -68,7 +72,7 @@ fun Routing.boardRouting() {
             ok<Model<Card>>(),
             badRequest())) { board ->
             call.respondText(
-                RequestExecuter.execute(GetNewlyAddedCards(board.id)),
+                RequestExecutor.execute(GetNewlyAddedCards(board.id)),
                 contentType = ContentType.Application.Json
             )
         }
@@ -76,7 +80,7 @@ fun Routing.boardRouting() {
         get<board>("Find a board".responds(ok<Board>(), badRequest())) { board ->
             val request = RequestInfo(board.id, board.key, board.token)
             call.respondText(
-                RequestExecuter.execute(GetBoard(request)),
+                RequestExecutor.execute(GetBoard(request)),
                 contentType = ContentType.Application.Json
             )
         }
@@ -84,7 +88,7 @@ fun Routing.boardRouting() {
         get<boardDetailed>("Find a board detailed".responds(ok<Board>(), badRequest())) { board ->
             val request = RequestInfo(board.id, board.key, board.token)
             call.respondText(
-                RequestExecuter.execute(GetDetailedBoard(request)),
+                RequestExecutor.execute(GetDetailedBoard(request)),
                 contentType = ContentType.Application.Json
             )
         }
@@ -92,7 +96,7 @@ fun Routing.boardRouting() {
         get<boardStatistics>("Find statistics of a board".responds(ok<Statistics>(), badRequest())) { board ->
             val request = RequestInfo(board.id, board.key, board.token)
             call.respondText(
-                RequestExecuter.execute(GetBoardStatistics(request)),
+                RequestExecutor.execute(GetBoardStatistics(request)),
                 contentType = ContentType.Application.Json
             )
         }
@@ -100,7 +104,7 @@ fun Routing.boardRouting() {
         get<boardLastAction>("Find the last action on a board".responds(ok<Action>(), badRequest())) { board ->
             val request = RequestInfo(board.id, board.key, board.token)
             call.respondText(
-                RequestExecuter.execute(GetLastBoardAction(request)),
+                RequestExecutor.execute(GetLastBoardAction(request)),
                 contentType = ContentType.Application.Json
             )
         }
@@ -112,7 +116,7 @@ fun Routing.boardRouting() {
             )
         ) { board ->
             call.respondText(
-                RequestExecuter.execute(GetTeamStatistics(board.id, board.today)),
+                RequestExecutor.execute(GetTeamStatistics(board.id, board.today)),
                 contentType = ContentType.Application.Json
             )
         }
@@ -125,7 +129,7 @@ fun Routing.boardRouting() {
         ) { board ->
             val sprintDates = SprintDates(board.startDate, board.endDate)
             call.respondText(
-                RequestExecuter.execute(GetBurndownChartInfo(board.id, sprintDates)),
+                RequestExecutor.execute(GetBurndownChartInfo(board.id, sprintDates)),
                 contentType = ContentType.Application.Json
             )
         }
@@ -137,7 +141,7 @@ fun Routing.boardRouting() {
             )
         ) { board ->
             call.respondText(
-                RequestExecuter.execute(
+                RequestExecutor.execute(
                     GetLeaderboardData(
                         board.id,
                         board.startDate,
@@ -151,7 +155,7 @@ fun Routing.boardRouting() {
         get<boardMembers>("Find all the members of a board".responds(ok<Array<Member>>(), badRequest())) { board ->
             val request = RequestInfo(board.id, board.key, board.token)
             call.respondText(
-                RequestExecuter.execute(GetBoardMembers(request)),
+                RequestExecutor.execute(GetBoardMembers(request)),
                 contentType = ContentType.Application.Json
             )
         }

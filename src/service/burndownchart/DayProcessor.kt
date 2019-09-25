@@ -6,8 +6,8 @@ import nl.teqplay.trelloextension.helper.JsonHelper
 import nl.teqplay.trelloextension.helper.TrelloCall
 import nl.teqplay.trelloextension.model.BurndownChartDetails
 import nl.teqplay.trelloextension.model.BurndownChartItem
-import nl.teqplay.trelloextension.model.Card
-import nl.teqplay.trelloextension.model.List
+import nl.teqplay.trelloextension.model.trello.Card
+import nl.teqplay.trelloextension.model.trello.List
 
 class DayProcessor {
 
@@ -17,7 +17,8 @@ class DayProcessor {
         gson: Gson,
         boardCall: TrelloCall,
         client: HttpClient,
-        doneListId: String
+        doneListId: String,
+        readyListId: String
     ): BurndownChartDetails {
         val lists = JsonHelper.fromJson(gson, boardCall, client, Array<List>::class.java)
         val bcDetails = BurndownChartDetails()
@@ -29,10 +30,10 @@ class DayProcessor {
 
             val cards = JsonHelper.fromJson(gson, listCall, client, Array<Card>::class.java)
 
-            val hours = getAmount(list, cards, """\[[+-]?(\d*\.)?\d+\]""", "[", "]", doneListId, bcDetails)
-            val points = getAmount(list, cards, """\([+-]?(\d*\.)?\d+\)""", "(", ")", doneListId, bcDetails)
+            val hours = getAmount(list, cards, """\[[+-]?(\d*\.)?\d+\]""", "[", "]", doneListId, readyListId, bcDetails)
+            val points = getAmount(list, cards, """\([+-]?(\d*\.)?\d+\)""", "(", ")", doneListId, readyListId, bcDetails)
 
-            if (list.id == doneListId) {
+            if (list.id == doneListId || list.id == readyListId) {
                 bcDetails.donePoints += points.toInt()
                 bcDetails.doneItems += cards.size
                 bcDetails.doneHoursSpend += hours
@@ -67,6 +68,7 @@ class DayProcessor {
         prefix: String,
         suffix: String,
         doneListId: String,
+        readyListId: String,
         bcDetails: BurndownChartDetails
     ): Float {
         var resultTotal = 0f
@@ -77,9 +79,8 @@ class DayProcessor {
                 val resultString = result.value.removeSurrounding(prefix, suffix)
                 val resultValue = resultString.toFloat()
                 resultTotal += resultValue
-                // TODO fix logic
-                if (resultValue == 0f && list.id == doneListId) {
-                    processZeroHoursOnDoneItem(card, resultString, bcDetails)
+                if (resultValue == 0f && (list.id == doneListId || list.id == readyListId)) {
+                    processMissingInfo(card, bcDetails)
                 }
 
             } else {
@@ -92,11 +93,5 @@ class DayProcessor {
 
     private fun processMissingInfo(card: Card, bcDetails: BurndownChartDetails) {
         bcDetails.missingInfo[card.id] = true
-    }
-
-    private fun processZeroHoursOnDoneItem(card: Card, result: String, bcDetails: BurndownChartDetails) {
-        if (result.toFloat() == 0f) {
-            processMissingInfo(card, bcDetails)
-        }
     }
 }

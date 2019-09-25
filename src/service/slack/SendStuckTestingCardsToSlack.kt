@@ -3,7 +3,7 @@ package nl.teqplay.trelloextension.service.slack
 import nl.teqplay.trelloextension.datasource.CardDataSource
 import nl.teqplay.trelloextension.datasource.Database
 import nl.teqplay.trelloextension.helper.SlackCall
-import nl.teqplay.trelloextension.model.Card
+import nl.teqplay.trelloextension.model.trello.Card
 import nl.teqplay.trelloextension.model.slack.Attachment
 import nl.teqplay.trelloextension.model.slack.AttachmentField
 import nl.teqplay.trelloextension.service.BaseRequest

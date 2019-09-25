@@ -1,6 +1,6 @@
 package nl.teqplay.trelloextension.datasource
 
-import nl.teqplay.trelloextension.model.Card
+import nl.teqplay.trelloextension.model.trello.Card
 import org.bson.conversions.Bson
 import org.litote.kmongo.*
 import kotlin.collections.toList

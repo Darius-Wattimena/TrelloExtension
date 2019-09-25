@@ -11,9 +11,9 @@ import io.ktor.http.ContentType
 import io.ktor.locations.Location
 import io.ktor.response.respondText
 import io.ktor.routing.Routing
-import nl.teqplay.trelloextension.RequestExecuter
+import nl.teqplay.trelloextension.RequestExecutor
 import nl.teqplay.trelloextension.helper.RequestInfo
-import nl.teqplay.trelloextension.model.Action
+import nl.teqplay.trelloextension.model.trello.Action
 import nl.teqplay.trelloextension.service.action.GetAction
 
 @Group("Action operations")
@@ -25,7 +25,7 @@ fun Routing.actionRouting() {
         get<action>("Find an action".responds(ok<Action>(), notFound())) { action ->
             val request = RequestInfo(action.id, action.key, action.token)
             call.respondText(
-                RequestExecuter.execute(GetAction(request)),
+                RequestExecutor.execute(GetAction(request)),
                 contentType = ContentType.Application.Json
             )
         }

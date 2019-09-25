@@ -3,9 +3,9 @@ package nl.teqplay.trelloextension.service.board
 import nl.teqplay.trelloextension.helper.JsonHelper
 import nl.teqplay.trelloextension.helper.RequestInfo
 import nl.teqplay.trelloextension.helper.TrelloCall
-import nl.teqplay.trelloextension.model.Board
-import nl.teqplay.trelloextension.model.Card
-import nl.teqplay.trelloextension.model.List
+import nl.teqplay.trelloextension.model.trello.Board
+import nl.teqplay.trelloextension.model.trello.Card
+import nl.teqplay.trelloextension.model.trello.List
 import nl.teqplay.trelloextension.service.BaseRequest
 
 class GetDetailedBoard(private val requestInfo: RequestInfo) : BaseRequest<Board>() {
@@ -20,7 +20,6 @@ class GetDetailedBoard(private val requestInfo: RequestInfo) : BaseRequest<Board
     override suspend fun execute(): Board {
         val board = JsonHelper.fromJson(gson, boardCall, client, Board::class.java)
         board.lists = getListAndCards(board)
-        client.close()
         return board
     }
 

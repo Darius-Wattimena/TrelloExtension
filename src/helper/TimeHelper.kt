@@ -1,5 +1,6 @@
 package nl.teqplay.trelloextension.helper
 
+import java.text.SimpleDateFormat
 import java.time.Duration
 import java.time.LocalDate
 import java.time.ZoneId
@@ -37,6 +38,23 @@ object TimeHelper {
         val convertedToday = ZonedDateTime.ofInstant(today.toInstant(), ZoneId.of("UTC"))
 
         return DateTimeFormatter.ISO_LOCAL_DATE.format(convertedToday)
+    }
+
+    fun getYesterday(): Date {
+        val cal = Calendar.getInstance()
+        cal.add(Calendar.DATE, -1)
+        return cal.time
+    }
+
+    fun getISO8061UTCFromDate(date: Date): String {
+        val tz = TimeZone.getTimeZone("UTC")
+        val df = SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'")
+        df.timeZone = tz
+        return df.format(date)
+    }
+
+    fun getMongoDBTimestamp(date: Date): String {
+        return (date.time / 1000).toString(16) + "0000000000000000"
     }
 
     fun scheduleNewTaskForTheNextDay(
