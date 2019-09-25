@@ -11,7 +11,7 @@ import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit
 
 object TimeHelper {
-    fun getISOLocalDateStringToEpochMilliseconds(isoDate: String, zoneId: String = "UTC"): Long {
+    fun getEpochMillisecondsFromISOLocalDate(isoDate: String, zoneId: String = "UTC"): Long {
         return epochSecondsToMilliseconds(
             getZonedDateTimeFromISOLocalDateString(isoDate, zoneId)
                 .toEpochSecond()

@@ -19,7 +19,9 @@ class GetBurndownChartInfo(private val boardId: String, private val sprintDates:
         val databaseItems =
             BurndownChartDataSource.findAllBetweenEpochDates(boardId, sprintDates.epochStartDate, sprintDates.epochEndDate, db)
 
-        burndownChart.items.addAll(databaseItems)
+        val sortedItems = databaseItems.sortedBy { it.date }
+
+        burndownChart.items.addAll(sortedItems)
 
         return burndownChart
     }

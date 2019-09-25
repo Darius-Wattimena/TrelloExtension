@@ -29,7 +29,7 @@ class SyncTeamStatistics(
     }
 
     override suspend fun execute(): String {
-        val todayDate = TimeHelper.getISOLocalDateStringToEpochMilliseconds(today)
+        val todayDate = TimeHelper.getEpochMillisecondsFromISOLocalDate(today)
 
         val lists = JsonHelper.fromJson(gson, boardCall, client, Array<List>::class.java)
         val resultItem = TeamStatistics(boardId, todayDate)

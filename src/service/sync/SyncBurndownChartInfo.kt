@@ -3,11 +3,10 @@ package nl.teqplay.trelloextension.service.sync
 import nl.teqplay.trelloextension.Constants
 import nl.teqplay.trelloextension.datasource.BurndownChartDataSource
 import nl.teqplay.trelloextension.datasource.Database
+import nl.teqplay.trelloextension.helper.TimeHelper
 import nl.teqplay.trelloextension.helper.TrelloCall
 import nl.teqplay.trelloextension.service.BaseRequest
 import nl.teqplay.trelloextension.service.burndownchart.DayProcessor
-import java.sql.Date
-import java.time.LocalDate
 
 class SyncBurndownChartInfo(
     private val boardId: String,
@@ -27,8 +26,7 @@ class SyncBurndownChartInfo(
     }
 
     override suspend fun execute(): String {
-        val today = LocalDate.parse(today)
-        val todayDate = Date.valueOf(today).time
+        val todayDate = TimeHelper.getEpochMillisecondsFromISOLocalDate(today)
 
         DayProcessor().run {
             val details = process(key, token, gson, boardCall, client, doneListId, readyListId)
