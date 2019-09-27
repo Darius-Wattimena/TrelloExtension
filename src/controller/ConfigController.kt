@@ -33,9 +33,9 @@ fun Routing.configRouting() {
             )
         }
 
-        put<saveSyncInfo, SyncConfig>("Save sync info".responds(ok<String>(), notFound())) { syncCall, syncConfig ->
+        put<saveSyncInfo, SyncConfig>("Save sync info".responds(ok<String>(), notFound())) { _, syncConfig ->
             RequestExecutor.execute(PostSyncConfig(syncConfig))
-            call.respond(HttpStatusCode.Accepted, "Completed save")
+            call.respond(HttpStatusCode.OK, "Completed save")
         }
     }
 }
