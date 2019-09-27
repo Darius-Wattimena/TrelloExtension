@@ -1,16 +1,20 @@
 package nl.teqplay.trelloextension
 
 import io.ktor.http.HttpMethod
+import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.handleRequest
 import io.ktor.server.testing.withTestApplication
+import io.ktor.util.url
+import org.litote.kmongo.json
 import kotlin.test.Test
+import kotlin.test.assertEquals
 
-class ApplicationTest {
+class ApplicationTests {
     @Test
-    fun testRoot() {
+    fun `Handling get request to root respond with a 302 status code`() {
         withTestApplication({ module(testing = true) }) {
             handleRequest(HttpMethod.Get, "/").apply {
-                //assertEquals(HttpStatusCode.OK, response.status())
+                assertEquals(HttpStatusCode.Found, response.status())
             }
         }
     }
