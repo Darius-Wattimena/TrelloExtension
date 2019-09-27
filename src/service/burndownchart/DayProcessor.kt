@@ -31,7 +31,8 @@ class DayProcessor {
             val cards = JsonHelper.fromJson(gson, listCall, client, Array<Card>::class.java)
 
             val hours = getAmount(list, cards, """\[[+-]?(\d*\.)?\d+\]""", "[", "]", doneListId, readyListId, bcDetails)
-            val points = getAmount(list, cards, """\([+-]?(\d*\.)?\d+\)""", "(", ")", doneListId, readyListId, bcDetails)
+            val points =
+                getAmount(list, cards, """\([+-]?(\d*\.)?\d+\)""", "(", ")", doneListId, readyListId, bcDetails)
 
             if (list.id == doneListId || list.id == readyListId) {
                 bcDetails.donePoints += points.toInt()
@@ -47,7 +48,11 @@ class DayProcessor {
         return bcDetails
     }
 
-    fun convertToBurndownChartItem(boardId: String, bcDetails: BurndownChartDetails, epochDate: Long): BurndownChartItem {
+    fun convertToBurndownChartItem(
+        boardId: String,
+        bcDetails: BurndownChartDetails,
+        epochDate: Long
+    ): BurndownChartItem {
         return BurndownChartItem(
             boardId,
             epochDate,

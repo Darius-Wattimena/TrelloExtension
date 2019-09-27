@@ -7,7 +7,9 @@ import nl.teqplay.trelloextension.datasource.MemberDataSource
 import nl.teqplay.trelloextension.helper.JsonHelper
 import nl.teqplay.trelloextension.helper.RequestInfo
 import nl.teqplay.trelloextension.helper.TrelloCall
-import nl.teqplay.trelloextension.model.*
+import nl.teqplay.trelloextension.model.LeaderboardItem
+import nl.teqplay.trelloextension.model.SprintDates
+import nl.teqplay.trelloextension.model.SprintLists
 import nl.teqplay.trelloextension.model.trello.Card
 import nl.teqplay.trelloextension.model.trello.List
 import nl.teqplay.trelloextension.model.trello.Member

@@ -13,7 +13,10 @@ import io.ktor.response.respondText
 import io.ktor.routing.Routing
 import nl.teqplay.trelloextension.RequestExecutor
 import nl.teqplay.trelloextension.helper.RequestInfo
-import nl.teqplay.trelloextension.model.*
+import nl.teqplay.trelloextension.model.Leaderboard
+import nl.teqplay.trelloextension.model.SprintDates
+import nl.teqplay.trelloextension.model.Statistics
+import nl.teqplay.trelloextension.model.TeamStatistics
 import nl.teqplay.trelloextension.model.trello.Action
 import nl.teqplay.trelloextension.model.trello.Board
 import nl.teqplay.trelloextension.model.trello.Card
@@ -68,9 +71,12 @@ data class boardNewlyAddedCards(val id: String)
 
 fun Routing.boardRouting() {
     authenticate("basicAuth") {
-        get<boardNewlyAddedCards>("Find all newly added cards on the board".responds(
-            ok<Model<Card>>(),
-            badRequest())) { board ->
+        get<boardNewlyAddedCards>(
+            "Find all newly added cards on the board".responds(
+                ok<Model<Card>>(),
+                badRequest()
+            )
+        ) { board ->
             call.respondText(
                 RequestExecutor.execute(GetNewlyAddedCards(board.id)),
                 contentType = ContentType.Application.Json

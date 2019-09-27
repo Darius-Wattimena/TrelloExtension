@@ -6,7 +6,7 @@ import nl.teqplay.trelloextension.model.trello.List
 import nl.teqplay.trelloextension.service.list.GetBoardLists
 
 object BoardHelper {
-    suspend fun getBoardLists(boardId: String, key: String, token: String) : BoardLists {
+    suspend fun getBoardLists(boardId: String, key: String, token: String): BoardLists {
         val lists = GetBoardLists(
             boardId, key, token
         ).execute()
@@ -14,7 +14,7 @@ object BoardHelper {
         return createBoardLists(lists)
     }
 
-    fun createBoardLists(lists: Array<List>) : BoardLists {
+    fun createBoardLists(lists: Array<List>): BoardLists {
         var niceToHaveListId = ""
         var prioListId = ""
         var doingListId = ""
@@ -43,7 +43,7 @@ object BoardHelper {
             }
         }
 
-        var listWithHighestNumber : List? = null
+        var listWithHighestNumber: List? = null
         var numberOfHighestList = 0
 
         val regex = Regex("""([0-9])\w+""")

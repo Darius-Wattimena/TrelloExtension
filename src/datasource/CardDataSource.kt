@@ -6,7 +6,12 @@ import org.litote.kmongo.*
 import kotlin.collections.toList
 
 object CardDataSource {
-    fun findAllCardsOfList(boardId: String, listId: String, minimumDaysInList: Int, database: Database.Companion.DatabaseImpl) : List<Card> {
+    fun findAllCardsOfList(
+        boardId: String,
+        listId: String,
+        minimumDaysInList: Int,
+        database: Database.Companion.DatabaseImpl
+    ): List<Card> {
         val collection = database.cardCollection
         return collection.find(
             and(
@@ -17,7 +22,11 @@ object CardDataSource {
         ).toList()
     }
 
-    fun findAllCardsOfList(boardId: String, listIds: Array<String>, database: Database.Companion.DatabaseImpl) : List<Card> {
+    fun findAllCardsOfList(
+        boardId: String,
+        listIds: Array<String>,
+        database: Database.Companion.DatabaseImpl
+    ): List<Card> {
         val collection = database.cardCollection
         val listsSelect = mutableListOf<Bson>()
 
@@ -33,14 +42,14 @@ object CardDataSource {
     }
 
 
-
     fun saveCard(card: Card, boardId: String, database: Database.Companion.DatabaseImpl) {
         val collection = database.cardCollection
         val updateResult = collection.updateOne(
             and(
                 Card::id eq card.id,
                 Card::boardId eq boardId
-            ), card)
+            ), card
+        )
 
         if (updateResult.matchedCount == 0L) {
             collection.insertOne(card)
@@ -64,7 +73,7 @@ object CardDataSource {
         boardId: String,
         todayDate: String,
         database: Database.Companion.DatabaseImpl
-    ) : List<Card> {
+    ): List<Card> {
         val collection = database.cardCollection
         return collection.find(
             and(

@@ -61,10 +61,10 @@ class CustomTimerFeature(configuration: Configuration) {
         val duration = Duration.between(currentDateTime, nextZonedDateTime)
         val initialDelay = duration.seconds
 
-        logger.info("Setting up first timer task and run this task in $initialDelay seconds")
+        logger.info("Setting up sync timer task and run this task in $initialDelay seconds")
 
         scheduler.scheduleAtFixedRate(
-            SyncTimerTask(scheduler, currentDateTime),
+            SyncTimerTask(),
             initialDelay,
             TimeUnit.DAYS.toSeconds(1),
             TimeUnit.SECONDS
@@ -76,19 +76,18 @@ class CustomTimerFeature(configuration: Configuration) {
         currentDateTime: ZonedDateTime,
         scheduler: ScheduledExecutorService
     ) {
-        nextZonedDateTime.withHour(7)
+        val slackTaskDateTime = nextZonedDateTime.withHour(7)
 
-        val duration = Duration.between(currentDateTime, nextZonedDateTime)
+        val duration = Duration.between(currentDateTime, slackTaskDateTime)
         val initialDelay = duration.seconds
 
         logger.info("Setting up slack timer task and run this task in $initialDelay seconds")
 
         scheduler.scheduleAtFixedRate(
-            SlackDailyMessageTimerTask(scheduler, currentDateTime),
+            SlackDailyMessageTimerTask(),
             initialDelay,
             TimeUnit.DAYS.toSeconds(1),
             TimeUnit.SECONDS
-
         )
     }
 

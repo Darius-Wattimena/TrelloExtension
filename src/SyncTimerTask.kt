@@ -6,26 +6,20 @@ import kotlinx.coroutines.launch
 import nl.teqplay.trelloextension.datasource.ConfigDataSource
 import nl.teqplay.trelloextension.datasource.Database
 import nl.teqplay.trelloextension.helper.BoardHelper
-import nl.teqplay.trelloextension.helper.TimeHelper
 import nl.teqplay.trelloextension.helper.TimeHelper.getISODateForToday
-import nl.teqplay.trelloextension.model.trello.List
 import nl.teqplay.trelloextension.model.sync.BoardSyncConfig
 import nl.teqplay.trelloextension.model.sync.SyncConfig
+import nl.teqplay.trelloextension.model.trello.List
 import nl.teqplay.trelloextension.service.card.SyncCardsOfLists
 import nl.teqplay.trelloextension.service.list.GetBoardLists
 import nl.teqplay.trelloextension.service.sync.SyncBurndownChartInfo
 import nl.teqplay.trelloextension.service.sync.SyncMembers
 import nl.teqplay.trelloextension.service.sync.SyncTeamStatistics
 import org.slf4j.LoggerFactory
-import java.time.ZonedDateTime
 import java.util.*
-import java.util.concurrent.ScheduledExecutorService
 
 
-class SyncTimerTask(
-    private val scheduler: ScheduledExecutorService,
-    private val zonedDateTime: ZonedDateTime
-) : TimerTask() {
+class SyncTimerTask : TimerTask() {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     override fun run() {
@@ -76,7 +70,6 @@ class SyncTimerTask(
                     executeSyncCardsOfList(board, config, lists, stringToday)
                 }
             }
-            scheduleNewTaskForTomorrow(scheduler, zonedDateTime)
         }
     }
 
@@ -94,15 +87,6 @@ class SyncTimerTask(
                 lists,
                 stringToday
             )
-        )
-    }
-
-    private fun scheduleNewTaskForTomorrow(scheduler: ScheduledExecutorService, currentDateTime: ZonedDateTime) {
-        logger.info("Scheduling new sync timer task")
-        TimeHelper.scheduleNewTaskForTheNextDay(
-            SyncTimerTask(scheduler, currentDateTime),
-            scheduler,
-            currentDateTime
         )
     }
 }

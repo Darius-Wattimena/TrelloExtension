@@ -11,8 +11,8 @@ import io.ktor.response.respond
 import io.ktor.response.respondText
 import io.ktor.routing.Routing
 import nl.teqplay.trelloextension.RequestExecutor
-import nl.teqplay.trelloextension.model.trello.Member
 import nl.teqplay.trelloextension.model.sync.SyncConfig
+import nl.teqplay.trelloextension.model.trello.Member
 import nl.teqplay.trelloextension.service.config.GetSyncConfig
 import nl.teqplay.trelloextension.service.config.PostSyncConfig
 

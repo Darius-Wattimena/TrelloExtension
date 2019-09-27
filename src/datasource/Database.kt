@@ -4,7 +4,9 @@ import com.mongodb.MongoCredential
 import com.mongodb.ServerAddress
 import com.typesafe.config.ConfigFactory
 import io.ktor.config.HoconApplicationConfig
-import nl.teqplay.trelloextension.model.*
+import nl.teqplay.trelloextension.model.BurndownChartItem
+import nl.teqplay.trelloextension.model.LeaderboardItem
+import nl.teqplay.trelloextension.model.TeamStatistics
 import nl.teqplay.trelloextension.model.sync.SyncConfig
 import nl.teqplay.trelloextension.model.trello.Card
 import nl.teqplay.trelloextension.model.trello.Member

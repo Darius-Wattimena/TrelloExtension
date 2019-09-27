@@ -1,14 +1,10 @@
 package nl.teqplay.trelloextension.helper
 
-import java.text.SimpleDateFormat
-import java.time.Duration
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
-import java.util.concurrent.ScheduledExecutorService
-import java.util.concurrent.TimeUnit
 
 object TimeHelper {
     fun getEpochMillisecondsFromISOLocalDate(isoDate: String, zoneId: String = "UTC"): Long {
@@ -46,39 +42,8 @@ object TimeHelper {
         return cal.time
     }
 
-    fun getISO8061UTCFromDate(date: Date): String {
-        val tz = TimeZone.getTimeZone("UTC")
-        val df = SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'")
-        df.timeZone = tz
-        return df.format(date)
-    }
-
     fun getMongoDBTimestamp(date: Date): String {
         return (date.time / 1000).toString(16) + "0000000000000000"
     }
 
-    fun scheduleNewTaskForTheNextDay(
-        task: TimerTask,
-        scheduler: ScheduledExecutorService,
-        currentDateTime: ZonedDateTime,
-        hour: Int = 2,
-        minute: Int = 0,
-        second: Int = 0
-    ) {
-        val nextZonedDateTime = currentDateTime
-            .withHour(hour)
-            .withMinute(minute)
-            .withSecond(second)
-            .plusDays(1)
-
-        val duration = Duration.between(currentDateTime, nextZonedDateTime)
-        val initialDelay = duration.seconds
-
-        scheduler.scheduleAtFixedRate(
-            task,
-            initialDelay,
-            TimeUnit.DAYS.toSeconds(1),
-            TimeUnit.SECONDS
-        )
-    }
 }

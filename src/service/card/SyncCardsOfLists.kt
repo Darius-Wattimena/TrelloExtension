@@ -64,20 +64,21 @@ class SyncCardsOfLists(
     private fun processCard(
         cardId: String,
         card: Card,
-        resultCards: MutableMap<String, Card>,
-        cardsRemovedFromTesting: MutableMap<String, Boolean>,
+        databaseCards: MutableMap<String, Card>,
+        cardsRemovedFromOldList: MutableMap<String, Boolean>,
         listId: String,
         stringToday: String
     ) {
         var currentCardDaysInList = 1
-        if (resultCards.containsKey(cardId)) {
-            cardsRemovedFromTesting[cardId] = false
+        if (databaseCards.containsKey(cardId)) {
+            val databaseCard = databaseCards[cardId]!!
+            cardsRemovedFromOldList[cardId] = false
 
-            card.dateAdded = resultCards[cardId]!!.dateAdded
-            card.boardId = resultCards[cardId]!!.boardId
+            card.dateAdded = databaseCard.dateAdded
+            card.boardId = databaseCard.boardId
 
-            if (resultCards[cardId]!!.listId == listId) {
-                currentCardDaysInList = resultCards[cardId]!!.daysInList + 1
+            if (databaseCard.listId == listId) {
+                currentCardDaysInList = databaseCard.daysInList + 1
             }
         } else {
             card.dateAdded = stringToday
@@ -86,6 +87,6 @@ class SyncCardsOfLists(
 
         card.daysInList = currentCardDaysInList
         card.listId = listId
-        resultCards[cardId] = card
+        databaseCards[cardId] = card
     }
 }

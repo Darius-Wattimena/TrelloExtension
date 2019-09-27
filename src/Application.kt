@@ -10,8 +10,6 @@ import io.ktor.application.install
 import io.ktor.auth.Authentication
 import io.ktor.auth.UserIdPrincipal
 import io.ktor.auth.basic
-import io.ktor.client.HttpClient
-import io.ktor.client.engine.apache.Apache
 import io.ktor.client.features.ClientRequestException
 import io.ktor.features.*
 import io.ktor.gson.gson
