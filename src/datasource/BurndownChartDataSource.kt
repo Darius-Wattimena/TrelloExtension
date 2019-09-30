@@ -21,17 +21,16 @@ object BurndownChartDataSource {
         ).toList()
     }
 
-    fun findWithEpochDate(date: Long, database: Database.Companion.DatabaseImpl): BurndownChartItem? {
-        val collection = database.burndownChartItemCollection
-        return collection.findOne(BurndownChartItem::date eq date)
-    }
-
     fun updateWhenBurndownChartItemDateIsFoundOtherwiseInsert(
         item: BurndownChartItem,
         database: Database.Companion.DatabaseImpl
     ) {
         val collection = database.burndownChartItemCollection
-        val updateResult = collection.updateOne(BurndownChartItem::date eq item.date, item)
+        val updateResult = collection.updateOne(
+            and(
+                BurndownChartItem::date eq item.date,
+                BurndownChartItem::boardId eq item.boardId
+            ), item)
         if (updateResult.matchedCount == 0L) {
             collection.insertOne(item)
         }

@@ -9,6 +9,6 @@ data class Card(
     var labels: Array<Label> = emptyArray(),
     var actions: Array<Action>? = emptyArray(),
     var members: Array<Member>? = emptyArray(),
-    var daysInList: Int,
-    var dateAdded: String
+    var dateAdded: String,
+    var datePlacedOnList: String
 )

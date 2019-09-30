@@ -30,6 +30,7 @@ class SlackDailyMessageTimerTask : TimerTask() {
                         SendStuckTestingCardsToSlack(
                             slackToken,
                             board.id,
+                            board.name,
                             boardLists.TestingListId,
                             3
                         )

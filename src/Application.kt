@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory
 import java.time.Duration
 import java.time.ZoneId
 import java.time.ZonedDateTime
+import java.util.*
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit
@@ -170,49 +171,47 @@ fun Application.module(@Suppress("UNUSED_PARAMETER") testing: Boolean = false) {
 
 private fun ScheduledExecutorService.setupTimer(currentDateTime: ZonedDateTime) {
     logger.info("Setting up timer")
-    var nextZonedDateTime = currentDateTime
-        .withHour(2)
+
+    val resetDateTime = currentDateTime
+        .withHour(0)
         .withMinute(0)
         .withSecond(0)
-    if (currentDateTime > nextZonedDateTime)
-        nextZonedDateTime = nextZonedDateTime.plusDays(1)
 
-    scheduleSyncTask(nextZonedDateTime, currentDateTime, this)
-    scheduleSlackTask(nextZonedDateTime, currentDateTime, this)
+    val syncZonedDateTime = checkIfNeedsToRunTomorrowDateTimeForTask(resetDateTime.withHour(2), currentDateTime)
+    val slackTaskDateTime = checkIfNeedsToRunTomorrowDateTimeForTask(resetDateTime.withHour(7), currentDateTime)
+
+    scheduleTask(SyncTimerTask(), syncZonedDateTime, currentDateTime, this)
+    scheduleTask(SlackDailyMessageTimerTask(), slackTaskDateTime, currentDateTime, this)
 }
 
-private fun scheduleSyncTask(
+private fun getInitialDelay(nextZonedDateTime: ZonedDateTime, currentDateTime: ZonedDateTime) : Long {
+    val duration = Duration.between(currentDateTime, nextZonedDateTime)
+    return duration.seconds
+}
+
+private fun checkIfNeedsToRunTomorrowDateTimeForTask(
+    nextZonedDateTime: ZonedDateTime,
+    currentDateTime: ZonedDateTime
+) : ZonedDateTime {
+    return if (currentDateTime > nextZonedDateTime) {
+        nextZonedDateTime.plusDays(1)
+    } else {
+        nextZonedDateTime
+    }
+}
+
+private fun scheduleTask(
+    timerTask: TimerTask,
     nextZonedDateTime: ZonedDateTime,
     currentDateTime: ZonedDateTime,
     scheduler: ScheduledExecutorService
 ) {
-    val duration = Duration.between(currentDateTime, nextZonedDateTime)
-    val initialDelay = duration.seconds
+    val initialDelay = getInitialDelay(nextZonedDateTime, currentDateTime)
 
     logger.info("Setting up sync timer task and run this task in $initialDelay seconds")
 
     scheduler.scheduleAtFixedRate(
-        SyncTimerTask(),
-        initialDelay,
-        TimeUnit.DAYS.toSeconds(1),
-        TimeUnit.SECONDS
-    )
-}
-
-private fun scheduleSlackTask(
-    nextZonedDateTime: ZonedDateTime,
-    currentDateTime: ZonedDateTime,
-    scheduler: ScheduledExecutorService
-) {
-    val slackTaskDateTime = nextZonedDateTime.withHour(7)
-
-    val duration = Duration.between(currentDateTime, slackTaskDateTime)
-    val initialDelay = duration.seconds
-
-    logger.info("Setting up slack timer task and run this task in $initialDelay seconds")
-
-    scheduler.scheduleAtFixedRate(
-        SlackDailyMessageTimerTask(),
+        timerTask,
         initialDelay,
         TimeUnit.DAYS.toSeconds(1),
         TimeUnit.SECONDS

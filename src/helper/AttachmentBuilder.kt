@@ -3,6 +3,7 @@ package nl.teqplay.trelloextension.helper
 import nl.teqplay.trelloextension.model.slack.Attachment
 import nl.teqplay.trelloextension.model.slack.AttachmentField
 import nl.teqplay.trelloextension.model.trello.Card
+import java.time.Duration
 
 class AttachmentBuilder {
 
@@ -15,8 +16,8 @@ class AttachmentBuilder {
         )
     }
 
-    fun buildTestingReportAttachment(card: Card): Attachment {
-        val attachmentColor = if (card.daysInList >= 5) "danger" else "warning"
+    fun buildTestingReportAttachment(card: Card, daysInList: Long): Attachment {
+        val attachmentColor = if (daysInList >= 5) "danger" else "warning"
         val formattedMembers = formatMembers(card)
 
         val attachment = Attachment(
@@ -27,9 +28,10 @@ class AttachmentBuilder {
         )
 
         attachment.addField(AttachmentField("Card Name", card.name))
-        attachment.addField(AttachmentField("Stuck on testing", "${card.daysInList} days"))
+        attachment.addField(AttachmentField("Stuck on testing", "$daysInList days"))
         attachment.addField(AttachmentField("Assigned to", formattedMembers))
         attachment.addField(AttachmentField("Date added to board", card.dateAdded))
+        attachment.addField(AttachmentField("Date placed on testing list", card.datePlacedOnList))
 
         return attachment
     }

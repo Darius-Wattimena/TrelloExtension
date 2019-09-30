@@ -1,8 +1,6 @@
 package nl.teqplay.trelloextension.helper
 
-import java.time.LocalDate
-import java.time.ZoneId
-import java.time.ZonedDateTime
+import java.time.*
 import java.time.format.DateTimeFormatter
 import java.util.*
 
@@ -22,6 +20,19 @@ object TimeHelper {
 
     fun epochSecondsToMilliseconds(epochSeconds: Long): Long {
         return epochSeconds * 1000;
+    }
+
+    fun getISODateForDaysAgo(daysAgo: Int): String {
+        val today = Calendar.getInstance(TimeZone.getTimeZone("UTC")).also {
+            it.set(Calendar.HOUR_OF_DAY, 0)
+            it.set(Calendar.MINUTE, 0)
+            it.set(Calendar.SECOND, 0)
+            it.add(Calendar.DATE, -daysAgo)
+        }
+
+        val convertedToday = ZonedDateTime.ofInstant(today.toInstant(), ZoneId.of("UTC"))
+
+        return DateTimeFormatter.ISO_LOCAL_DATE.format(convertedToday)
     }
 
     fun getISODateForToday(): String {
@@ -44,6 +55,12 @@ object TimeHelper {
 
     fun getMongoDBTimestamp(date: Date): String {
         return (date.time / 1000).toString(16) + "0000000000000000"
+    }
+
+    fun getTotalDaysBetweenISODates(startDate: String, endDate: String): Long {
+        val start = LocalDate.parse(startDate)
+        val end = LocalDate.parse(endDate)
+        return Duration.between(start.atStartOfDay(), end.atStartOfDay()).toDays()
     }
 
 }

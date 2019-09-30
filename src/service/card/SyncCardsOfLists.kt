@@ -23,7 +23,6 @@ class SyncCardsOfLists(
 
     override suspend fun execute(): String {
         val resultCards = mutableMapOf<String, Card>()
-
         val listIds = mutableListOf<String>()
 
         for (list in lists) {
@@ -31,14 +30,12 @@ class SyncCardsOfLists(
         }
 
         val databaseCards = CardDataSource.findAllCardsOfList(boardId, listIds.toTypedArray(), db)
-
         val cardsRemovedFromOldList = mutableMapOf<String, Boolean>()
 
         for (databaseCard in databaseCards) {
             resultCards[databaseCard.id] = databaseCard
             cardsRemovedFromOldList[databaseCard.id] = true
         }
-
 
         for (listId in listIds) {
             val call = TrelloCall(key, token)
@@ -69,7 +66,6 @@ class SyncCardsOfLists(
         listId: String,
         stringToday: String
     ) {
-        var currentCardDaysInList = 1
         if (databaseCards.containsKey(cardId)) {
             val databaseCard = databaseCards[cardId]!!
             cardsRemovedFromOldList[cardId] = false
@@ -78,14 +74,17 @@ class SyncCardsOfLists(
             card.boardId = databaseCard.boardId
 
             if (databaseCard.listId == listId) {
-                currentCardDaysInList = databaseCard.daysInList + 1
+                card.datePlacedOnList = databaseCard.datePlacedOnList
+                card.listId = listId
+                databaseCards[cardId] = card
+                return
             }
         } else {
             card.dateAdded = stringToday
             card.boardId = boardId
         }
 
-        card.daysInList = currentCardDaysInList
+        card.datePlacedOnList = stringToday
         card.listId = listId
         databaseCards[cardId] = card
     }

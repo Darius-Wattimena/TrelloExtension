@@ -9,7 +9,7 @@ object CardDataSource {
     fun findAllCardsOfList(
         boardId: String,
         listId: String,
-        minimumDaysInList: Int,
+        acceptableDate: String,
         database: Database.Companion.DatabaseImpl
     ): List<Card> {
         val collection = database.cardCollection
@@ -17,7 +17,7 @@ object CardDataSource {
             and(
                 Card::boardId eq boardId,
                 Card::listId eq listId,
-                Card::daysInList gte minimumDaysInList
+                Card::datePlacedOnList lte acceptableDate
             )
         ).toList()
     }
