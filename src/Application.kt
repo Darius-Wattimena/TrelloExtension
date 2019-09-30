@@ -21,9 +21,13 @@ import io.ktor.response.respond
 import io.ktor.routing.route
 import io.ktor.routing.routing
 import nl.teqplay.trelloextension.controller.*
+import org.slf4j.LoggerFactory
+import java.time.Duration
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.util.concurrent.Executors
+import java.util.concurrent.ScheduledExecutorService
+import java.util.concurrent.TimeUnit
 
 fun main(args: Array<String>) = io.ktor.server.netty.EngineMain.main(args)
 
@@ -71,9 +75,15 @@ val burndownchartSchemaMap = mapOf(
     )
 )
 
+private val logger = LoggerFactory.getLogger(Application::class.java)
+private val scheduler = Executors.newScheduledThreadPool(1)
+private val zonedDateTime = ZonedDateTime.now(ZoneId.of("UTC"))
+private var timerPrepared = false
+
 @Suppress("unused") // Referenced in application.conf
 @kotlin.jvm.JvmOverloads
 fun Application.module(@Suppress("UNUSED_PARAMETER") testing: Boolean = false) {
+    logger.info("Installing features")
     install(DefaultHeaders)
     install(Compression)
     install(CallLogging)
@@ -100,11 +110,6 @@ fun Application.module(@Suppress("UNUSED_PARAMETER") testing: Boolean = false) {
                 }
             }
         }
-    }
-
-    install(CustomTimerFeature) {
-        scheduler = Executors.newScheduledThreadPool(1)
-        zonedDateTime = ZonedDateTime.now(ZoneId.of("UTC"))
     }
 
     install(CORS) {
@@ -145,6 +150,11 @@ fun Application.module(@Suppress("UNUSED_PARAMETER") testing: Boolean = false) {
         }
     }
 
+    timerPrepared = true
+    if (zonedDateTime != null) {
+        scheduler.setupTimer(zonedDateTime)
+    }
+
     routing {
         route("/") {
             this@routing.boardRouting()
@@ -156,4 +166,55 @@ fun Application.module(@Suppress("UNUSED_PARAMETER") testing: Boolean = false) {
         }
 
     }
+}
+
+private fun ScheduledExecutorService.setupTimer(currentDateTime: ZonedDateTime) {
+    logger.info("Setting up timer")
+    var nextZonedDateTime = currentDateTime
+        .withHour(2)
+        .withMinute(0)
+        .withSecond(0)
+    if (currentDateTime > nextZonedDateTime)
+        nextZonedDateTime = nextZonedDateTime.plusDays(1)
+
+    scheduleSyncTask(nextZonedDateTime, currentDateTime, this)
+    scheduleSlackTask(nextZonedDateTime, currentDateTime, this)
+}
+
+private fun scheduleSyncTask(
+    nextZonedDateTime: ZonedDateTime,
+    currentDateTime: ZonedDateTime,
+    scheduler: ScheduledExecutorService
+) {
+    val duration = Duration.between(currentDateTime, nextZonedDateTime)
+    val initialDelay = duration.seconds
+
+    logger.info("Setting up sync timer task and run this task in $initialDelay seconds")
+
+    scheduler.scheduleAtFixedRate(
+        SyncTimerTask(),
+        initialDelay,
+        TimeUnit.DAYS.toSeconds(1),
+        TimeUnit.SECONDS
+    )
+}
+
+private fun scheduleSlackTask(
+    nextZonedDateTime: ZonedDateTime,
+    currentDateTime: ZonedDateTime,
+    scheduler: ScheduledExecutorService
+) {
+    val slackTaskDateTime = nextZonedDateTime.withHour(7)
+
+    val duration = Duration.between(currentDateTime, slackTaskDateTime)
+    val initialDelay = duration.seconds
+
+    logger.info("Setting up slack timer task and run this task in $initialDelay seconds")
+
+    scheduler.scheduleAtFixedRate(
+        SlackDailyMessageTimerTask(),
+        initialDelay,
+        TimeUnit.DAYS.toSeconds(1),
+        TimeUnit.SECONDS
+    )
 }
