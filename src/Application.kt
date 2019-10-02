@@ -1,5 +1,6 @@
 package nl.teqplay.trelloextension
 
+import com.typesafe.config.ConfigFactory
 import de.nielsfalk.ktor.swagger.SwaggerSupport
 import de.nielsfalk.ktor.swagger.version.shared.Information
 import de.nielsfalk.ktor.swagger.version.v2.Swagger
@@ -9,8 +10,10 @@ import io.ktor.application.call
 import io.ktor.application.install
 import io.ktor.auth.Authentication
 import io.ktor.auth.UserIdPrincipal
+import io.ktor.auth.UserPasswordCredential
 import io.ktor.auth.basic
 import io.ktor.client.features.ClientRequestException
+import io.ktor.config.HoconApplicationConfig
 import io.ktor.features.*
 import io.ktor.gson.gson
 import io.ktor.http.HttpHeaders
@@ -100,11 +103,16 @@ fun Application.module(@Suppress("UNUSED_PARAMETER") testing: Boolean = false) {
         }
     }
 
+    val config = HoconApplicationConfig(ConfigFactory.load())
+    val authConfig = config.config("ktor.application.basic_auth")
+    val authUsername = authConfig.property("username").getString()
+    val authPassword = authConfig.property("password").getString()
+
     install(Authentication) {
         basic("basicAuth") {
             realm = "backend-server"
             validate { credentials ->
-                if (credentials.name == "test") {
+                if (credentials.name == authUsername && credentials.password == authPassword) {
                     UserIdPrincipal(credentials.name)
                 } else {
                     null
@@ -164,6 +172,7 @@ fun Application.module(@Suppress("UNUSED_PARAMETER") testing: Boolean = false) {
             this@routing.memberRouting()
             this@routing.actionRouting()
             this@routing.configRouting()
+            this@routing.loginRouting()
         }
 
     }

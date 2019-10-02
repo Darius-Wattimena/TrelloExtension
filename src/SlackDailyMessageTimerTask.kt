@@ -23,8 +23,8 @@ class SlackDailyMessageTimerTask : TimerTask() {
                 for (board in syncConfig.boards) {
                     val boardLists = BoardHelper.getBoardLists(board.id, syncConfig.key, syncConfig.token)
                     val config = HoconApplicationConfig(ConfigFactory.load())
-                    val databaseConfig = config.config("ktor.application")
-                    val slackToken = databaseConfig.property("slack_token").getString()
+                    val appConfig = config.config("ktor.application")
+                    val slackToken = appConfig.property("slack_token").getString()
 
                     RequestExecutor.execute(
                         SendStuckTestingCardsToSlack(

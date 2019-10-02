@@ -66,12 +66,11 @@ class SyncCardsOfLists(
         listId: String,
         stringToday: String
     ) {
+        card.boardId = boardId
         if (databaseCards.containsKey(cardId)) {
             val databaseCard = databaseCards[cardId]!!
             cardsRemovedFromOldList[cardId] = false
-
             card.dateAdded = databaseCard.dateAdded
-            card.boardId = databaseCard.boardId
 
             if (databaseCard.listId == listId) {
                 card.datePlacedOnList = databaseCard.datePlacedOnList
@@ -81,9 +80,7 @@ class SyncCardsOfLists(
             }
         } else {
             card.dateAdded = stringToday
-            card.boardId = boardId
         }
-
         card.datePlacedOnList = stringToday
         card.listId = listId
         databaseCards[cardId] = card
