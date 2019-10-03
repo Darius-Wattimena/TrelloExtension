@@ -127,7 +127,8 @@ fun Application.module(@Suppress("UNUSED_PARAMETER") testing: Boolean = false) {
         host("localhost:3000", listOf("http", "https"))
         host("localhost:8080", listOf("http", "https"))
         host("trelloextension.eu-west-1.elasticbeanstalk.com", listOf("http", "https"))
-        //TODO add frontend host
+        host("backendtrelloextension.teqplay.nl", listOf("http", "https"))
+        host("tnt.teqplay.nl", listOf("http", "https"))
 
         method(HttpMethod.Get)
         method(HttpMethod.Post)
