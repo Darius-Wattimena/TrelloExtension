@@ -9,5 +9,6 @@ data class BurndownChartItem(
     val totalPoint: Int,
     val totalItems: Int,
     val totalHoursSpend: Float,
-    val missingInfoCards: HashMap<String, Boolean>
+    val missingInfoCards: HashMap<String, Boolean>,
+    var changeableDate: Boolean = false
 )
