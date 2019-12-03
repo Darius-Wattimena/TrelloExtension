@@ -191,7 +191,7 @@ private fun ScheduledExecutorService.setupTimer(currentDateTime: ZonedDateTime) 
     val slackTaskDateTime = checkIfNeedsToRunTomorrowDateTimeForTask(resetDateTime.withHour(7), currentDateTime)
 
     scheduleTask(SyncTimerTask(), syncZonedDateTime, currentDateTime, this)
-    scheduleTask(SlackDailyMessageTimerTask(), slackTaskDateTime, currentDateTime, this)
+    //scheduleTask(SlackDailyMessageTimerTask(), slackTaskDateTime, currentDateTime, this)
 }
 
 private fun getInitialDelay(nextZonedDateTime: ZonedDateTime, currentDateTime: ZonedDateTime) : Long {
